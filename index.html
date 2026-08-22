@@ -3,650 +3,533 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f4efe7">
-<title>K2 Visualize — Necklace Studio</title>
+<meta name="theme-color" content="#f6f6f3">
+<title>K2 Visualize — Jewelry Designer</title>
 <style>
 :root{
-  --bg:#f4efe7;
-  --ink:#171713;
-  --muted:rgba(23,23,19,.55);
-  --line:rgba(23,23,19,.12);
-  --card:#fbf8f2;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --bg:#f5f5f2;--panel:#fff;--ink:#181816;--muted:#75756d;--line:#e5e5df;
+  --accent:#161614;--soft:#f0f0eb;--green:#2d8b57;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-width:320px;min-height:100%;background:var(--bg);color:var(--ink)}
-button,input{font:inherit}
-button{-webkit-tap-highlight-color:transparent}
-.app{
-  max-width:1500px;
-  margin:auto;
-  padding:max(18px,env(safe-area-inset-top)) 18px max(36px,env(safe-area-inset-bottom));
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.app{height:100dvh;display:grid;grid-template-rows:58px 1fr 34px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 16px;
+  background:#fff;border-bottom:1px solid var(--line);z-index:10
 }
-header{
-  display:flex;align-items:center;justify-content:space-between;gap:18px;
-  border-bottom:1px solid var(--line);padding:6px 0 16px;
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:34px;height:34px;border-radius:10px;background:#171715;color:#fff;
+  display:grid;place-items:center;font-family:Georgia,serif;font-size:18px
 }
-.brand{display:flex;align-items:baseline;gap:10px}
-.brand strong{font-family:Georgia,serif;font-weight:500;font-size:32px}
-.brand span{font-size:10px;letter-spacing:.24em;color:var(--muted)}
-.actions{display:flex;gap:8px}
-.icon,.save{
-  border:1px solid var(--line);background:rgba(255,255,255,.42);
-  border-radius:999px;cursor:pointer
+.brandtxt{display:flex;flex-direction:column;line-height:1.05}
+.brandtxt b{font-size:13px}.brandtxt span{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:3px}
+.file-name{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;gap:7px;align-items:center}
+.top-actions button{
+  border:1px solid var(--line);background:#fff;border-radius:9px;height:34px;padding:0 12px;font-size:12px
 }
-.icon{width:40px;height:40px;font-size:18px}
-.save{padding:10px 16px}
+.top-actions .primary{background:#171715;color:#fff;border-color:#171715}
 
-.hero{
-  display:grid;
-  grid-template-columns:minmax(270px,.78fr) minmax(500px,1.22fr);
-  align-items:center;
-  gap:42px;
-  padding:38px 0 28px;
+.workspace{
+  min-height:0;display:grid;grid-template-columns:68px 1fr 310px;background:#efefeb
 }
-.copy{padding-left:clamp(0px,3vw,44px)}
-.eyebrow{font-size:10px;letter-spacing:.23em;font-weight:700;color:var(--muted)}
-h1{
-  font-family:Georgia,serif;font-weight:500;
-  font-size:clamp(48px,6vw,88px);line-height:.94;letter-spacing:-.045em;
-  margin:15px 0 18px;
+.toolbar{
+  background:#fff;border-right:1px solid var(--line);padding:10px 7px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;overflow-y:auto
 }
-.copy p{max-width:470px;line-height:1.65;color:var(--muted);font-size:14px}
+.tool{
+  width:52px;min-height:54px;border:0;background:transparent;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  color:#66665f;font-size:9px
+}
+.tool .ico{font-size:20px;line-height:1}
+.tool.active{background:#171715;color:#fff}
+.tool:hover:not(.active){background:#f3f3ef}
 
-.stage{
-  position:relative;height:min(64vw,640px);min-height:470px;
-  border-radius:34px;overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 23%,rgba(255,255,255,.98),rgba(247,241,232,.86) 40%,rgba(226,216,202,.78) 100%);
-  box-shadow:0 28px 80px rgba(55,42,25,.09),inset 0 0 0 1px rgba(255,255,255,.75);
-}
+.viewport-wrap{position:relative;min-width:0;min-height:0;overflow:hidden}
 #canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.stage-label{
-  position:absolute;left:18px;top:18px;
-  background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.85);border-radius:999px;
-  padding:9px 12px;font-size:11px;
+.view-top{
+  position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none
 }
-.stage-hint{
-  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
-  font-size:10px;color:var(--muted);white-space:nowrap;
+.chip{
+  pointer-events:auto;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border:1px solid rgba(0,0,0,.07);box-shadow:0 3px 18px rgba(0,0,0,.05);
+  border-radius:9px;padding:8px 10px;font-size:11px;color:#555
 }
+.view-controls{position:absolute;right:12px;bottom:12px;display:flex;gap:6px}
+.view-controls button{
+  width:36px;height:36px;border:1px solid var(--line);background:rgba(255,255,255,.92);
+  border-radius:9px;font-size:15px
+}
+.ai-card{
+  position:absolute;left:16px;bottom:16px;width:min(420px,calc(100% - 90px));
+  background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:14px;
+  padding:10px;box-shadow:0 8px 26px rgba(0,0,0,.07)
+}
+.ai-row{display:flex;gap:8px}
+.ai-row input{
+  flex:1;border:0;background:#f3f3ef;border-radius:9px;padding:10px 11px;outline:none;font-size:12px
+}
+.ai-row button{border:0;background:#171715;color:#fff;border-radius:9px;padding:0 14px;font-size:12px}
 
-.tabs{
-  display:flex;gap:5px;overflow:auto;scrollbar-width:none;
-  border-bottom:1px solid var(--line);padding:8px 0 17px;
+.inspector{
+  background:#fff;border-left:1px solid var(--line);overflow-y:auto;min-height:0
 }
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{
-  border:0;background:transparent;padding:12px 15px;border-radius:999px;
-  color:var(--muted);white-space:nowrap;cursor:pointer
+.inspector-head{
+  padding:16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:3
 }
-.tabs button.active{background:var(--ink);color:#fff}
+.inspector-head .kicker{font-size:9px;letter-spacing:.14em;color:var(--muted)}
+.inspector-head h2{font-size:17px;margin:5px 0 0}
+.section{padding:15px 16px;border-bottom:1px solid var(--line)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title b{font-size:12px}.section-title span{font-size:10px;color:var(--muted)}
+.templates{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.template{
+  aspect-ratio:1;border:1px solid var(--line);background:#fafaf7;border-radius:10px;
+  display:grid;place-items:center;font-size:24px;color:#777
+}
+.template.active{border-color:#171715;box-shadow:inset 0 0 0 1px #171715;background:#f3f3ef}
+.field{margin:11px 0}
+.field-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11px}
+.field-line span:first-child{color:#555}.value{font-variant-numeric:tabular-nums;color:#222}
+input[type="range"]{width:100%;accent-color:#171715}
+select,.num,input[type="text"]{
+  width:100%;border:1px solid var(--line);background:#fafaf7;border-radius:9px;padding:8px 9px;outline:none;font-size:11px
+}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.swatches{display:flex;gap:7px;flex-wrap:wrap}
+.swatch{
+  width:31px;height:31px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d7d7d0
+}
+.swatch.active{box-shadow:0 0 0 2px #171715}
+.stone-list{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.stone{
+  min-height:52px;border:1px solid var(--line);background:#fafaf7;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px
+}
+.stone i{width:15px;height:15px;border-radius:50%;display:block;box-shadow:inset 0 0 4px #fff}
+.stone.active{border-color:#171715;box-shadow:inset 0 0 0 1px #171715}
+.add-btn{width:100%;border:1px dashed #bdbdb5;background:#fafaf7;border-radius:9px;padding:9px;font-size:11px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:#f7f7f3;border-radius:10px;padding:10px}
+.stat span{display:block;font-size:9px;color:var(--muted);margin-bottom:4px}.stat b{font-size:13px}
+.valid{display:flex;align-items:center;gap:7px;color:var(--green);font-size:11px;margin-top:10px}
+.valid:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
 
-.panel{
-  display:none;max-width:1060px;margin:auto;padding:34px 0 44px;
+.statusbar{
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+  background:#fff;border-top:1px solid var(--line);font-size:10px;color:var(--muted)
 }
-.panel.active{display:block}
-.panel-head{
-  display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:end;margin-bottom:26px
-}
-.panel h2{font-family:Georgia,serif;font-weight:500;font-size:32px;margin:0}
-.panel-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.6;max-width:460px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.opt{
-  min-height:72px;border:1px solid var(--line);background:rgba(255,255,255,.34);
-  border-radius:18px;padding:13px;display:flex;align-items:center;justify-content:center;gap:10px;
-  cursor:pointer;transition:.15s ease
-}
-.opt:hover{transform:translateY(-1px);background:rgba(255,255,255,.56)}
-.opt.active{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:rgba(255,255,255,.76)}
-.sw{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
-.slider{display:block;margin:23px 0}
-.slider div{display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px}
-.slider input{width:100%;accent-color:var(--ink)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.field{
-  border:1px solid var(--line);background:rgba(255,255,255,.34);
-  border-radius:18px;padding:16px
-}
-.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:9px}
-.field input[type="text"]{
-  width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;
-  padding:7px 0 8px;outline:0;font-size:16px
-}
-.magic,.secondary{
-  border:0;border-radius:999px;padding:14px 18px;cursor:pointer
-}
-.magic{background:var(--ink);color:#fff}
-.secondary{background:rgba(255,255,255,.5);border:1px solid var(--line);color:var(--ink)}
+.status-left,.status-right{display:flex;gap:16px;align-items:center}
 
-.summary{
-  margin-top:8px;background:#191917;color:#f4efe7;border-radius:30px;
-  min-height:230px;padding:32px 34px;
-  display:flex;align-items:flex-end;justify-content:space-between;gap:24px
-}
-.summary h3{font-family:Georgia,serif;font-size:42px;font-weight:500;margin:10px 0 7px}
-.summary p{font-size:12px;line-height:1.7;color:rgba(244,239,231,.62)}
-.cta{
-  border:0;background:#f4efe7;color:#191917;border-radius:999px;padding:15px 20px;cursor:pointer
-}
-footer{
-  display:flex;justify-content:space-between;gap:18px;padding-top:22px;
-  font-size:9px;letter-spacing:.12em;color:var(--muted)
-}
+.mobile-panel-toggle{display:none}
 
-@media(max-width:860px){
-  .app{padding-left:14px;padding-right:14px}
-  .brand span{display:none}.icon{display:none}
-  .hero{display:flex;flex-direction:column;gap:20px;padding-top:30px}
-  .copy{width:100%;padding:0 8px}
-  h1{font-size:clamp(46px,13vw,68px)}
-  .stage{width:100%;height:58vh;min-height:440px}
-  .panel-head{grid-template-columns:1fr;gap:10px}
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .two-col{grid-template-columns:1fr}
-  .summary{flex-direction:column;align-items:stretch;min-height:285px}
-  .cta{width:100%}
-  footer{flex-direction:column}
+@media(max-width:900px){
+  .workspace{grid-template-columns:58px 1fr}
+  .inspector{
+    position:absolute;right:0;top:58px;bottom:34px;width:min(340px,88vw);
+    z-index:20;box-shadow:-10px 0 30px rgba(0,0,0,.12);
+    transform:translateX(100%);transition:.2s
+  }
+  .inspector.open{transform:translateX(0)}
+  .mobile-panel-toggle{display:block!important}
+  .toolbar{padding:8px 4px}.tool{width:48px}
+  .file-name{display:none}
+  .ai-card{left:10px;bottom:10px;width:calc(100% - 20px)}
 }
 </style>
 </head>
 <body>
 <div class="app">
-<header>
-  <div class="brand"><strong>K2</strong><span>VISUALIZE</span></div>
-  <div class="actions">
-    <button class="icon" id="undo">↶</button>
-    <button class="icon" id="redo">↷</button>
-    <button class="save" id="save">Guardar</button>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="copy">
-    <div class="eyebrow">NECKLACE STUDIO</div>
-    <h1>Diseña tu collar.<br>Hazlo tuyo.</h1>
-    <p>Combina cadena, colgante, material y piedra. Ajusta la forma y genera variaciones con un acabado más orgánico.</p>
-  </div>
-
-  <div class="stage">
-    <canvas id="canvas"></canvas>
-    <div class="stage-label" id="stageLabel">Cadena fina · Colgante circular</div>
-    <div class="stage-hint">Arrastra para girar · pellizca o rueda para zoom</div>
-  </div>
-</section>
-
-<nav class="tabs">
-  <button class="active" data-tab="cadena">Cadena</button>
-  <button data-tab="forma">Forma</button>
-  <button data-tab="material">Material</button>
-  <button data-tab="piedras">Piedras</button>
-  <button data-tab="personaliza">Personaliza</button>
-</nav>
-
-<section class="panel active" id="cadena">
-  <div class="panel-head">
-    <h2>Elige la cadena</h2>
-    <p>La cadena define el carácter del conjunto. Puedes cambiar grosor, estilo y longitud.</p>
-  </div>
-  <div class="grid">
-    <button class="opt active" data-chain="fine">Cadena fina</button>
-    <button class="opt" data-chain="classic">Clásica</button>
-    <button class="opt" data-chain="large">Eslabón grande</button>
-    <button class="opt" data-chain="black">Negra</button>
-  </div>
-  <label class="slider">
-    <div><span>Longitud visual</span><b id="chainLenVal">45 cm</b></div>
-    <input id="chainLen" type="range" min="40" max="60" step="5" value="45">
-  </label>
-</section>
-
-<section class="panel" id="forma">
-  <div class="panel-head">
-    <h2>Diseña el colgante</h2>
-    <p>Escoge una base y después modifica proporción, grosor e irregularidad.</p>
-  </div>
-  <div class="grid">
-    <button class="opt active" data-shape="circle">Círculo</button>
-    <button class="opt" data-shape="drop">Lágrima</button>
-    <button class="opt" data-shape="bar">Barra</button>
-    <button class="opt" data-shape="rect">Rectángulo</button>
-    <button class="opt" data-shape="triangle">Triángulo</button>
-    <button class="opt" data-shape="organic">Orgánico</button>
-  </div>
-  <label class="slider">
-    <div><span>Tamaño</span><b id="sizeVal">28 mm</b></div>
-    <input id="size" type="range" min="18" max="46" value="28">
-  </label>
-  <label class="slider">
-    <div><span>Grosor</span><b id="thickVal">3.0 mm</b></div>
-    <input id="thick" type="range" min="1.5" max="6" step=".5" value="3">
-  </label>
-</section>
-
-<section class="panel" id="material">
-  <div class="panel-head">
-    <h2>Material y acabado</h2>
-    <p>Cambia el material del conjunto y ajusta el carácter de la superficie.</p>
-  </div>
-  <div class="grid">
-    <button class="opt active" data-material="silver"><span class="sw" style="background:#cfd2d4"></span>Plata</button>
-    <button class="opt" data-material="gold"><span class="sw" style="background:#d6ad54"></span>Oro</button>
-    <button class="opt" data-material="rose"><span class="sw" style="background:#c98a76"></span>Oro rosa</button>
-    <button class="opt" data-material="dark"><span class="sw" style="background:#3a3937"></span>Negro</button>
-  </div>
-  <label class="slider">
-    <div><span>Acabado artesanal</span><b id="organicVal">24%</b></div>
-    <input id="organic" type="range" min="0" max="100" value="24">
-  </label>
-  <label class="slider">
-    <div><span>Rugosidad</span><b id="roughVal">18%</b></div>
-    <input id="rough" type="range" min="0" max="100" value="18">
-  </label>
-</section>
-
-<section class="panel" id="piedras">
-  <div class="panel-head">
-    <h2>Añade una piedra</h2>
-    <p>La piedra se integra en la cara frontal del colgante. En futuras versiones podrá desplazarse libremente.</p>
-  </div>
-  <div class="grid">
-    <button class="opt active" data-gem="none">Sin piedra</button>
-    <button class="opt" data-gem="diamond"><span class="sw" style="background:#f4fdff"></span>Diamante</button>
-    <button class="opt" data-gem="sapphire"><span class="sw" style="background:#2454b8"></span>Zafiro</button>
-    <button class="opt" data-gem="ruby"><span class="sw" style="background:#b6233d"></span>Rubí</button>
-    <button class="opt" data-gem="emerald"><span class="sw" style="background:#16815c"></span>Esmeralda</button>
-    <button class="opt" data-gem="amethyst"><span class="sw" style="background:#7751a8"></span>Amatista</button>
-  </div>
-  <label class="slider">
-    <div><span>Tamaño de piedra</span><b id="gemSizeVal">4.0 mm</b></div>
-    <input id="gemSize" type="range" min="2" max="8" step=".5" value="4">
-  </label>
-</section>
-
-<section class="panel" id="personaliza">
-  <div class="panel-head">
-    <h2>Personaliza</h2>
-    <p>Añade grabado y genera una variación más orgánica del diseño.</p>
-  </div>
-  <div class="two-col">
-    <div class="field">
-      <label>Grabado frontal</label>
-      <input id="engraving" type="text" maxlength="16" placeholder="BETI GUREKIN">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">K2</div>
+      <div class="brandtxt"><b>Visualize</b><span>JEWELRY DESIGNER</span></div>
+      <div class="file-name">Untitled pendant · autosaved</div>
     </div>
-    <div class="field">
-      <label>Posición</label>
-      <div class="grid" style="grid-template-columns:repeat(2,1fr)">
-        <button class="opt active" data-engravingpos="front">Frontal</button>
-        <button class="opt" data-engravingpos="back">Trasera</button>
+    <div class="top-actions">
+      <button id="undo">↶</button>
+      <button id="redo">↷</button>
+      <button id="panelToggle" class="mobile-panel-toggle">Properties</button>
+      <button id="save">Save</button>
+      <button class="primary" id="exportBtn">Export</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="toolbar">
+      <button class="tool active" data-tool="design"><span class="ico">◇</span><span>Design</span></button>
+      <button class="tool" data-tool="templates"><span class="ico">▦</span><span>Templates</span></button>
+      <button class="tool" data-tool="stones"><span class="ico">◆</span><span>Stones</span></button>
+      <button class="tool" data-tool="settings"><span class="ico">⌁</span><span>Settings</span></button>
+      <button class="tool" data-tool="text"><span class="ico">T</span><span>Text</span></button>
+      <button class="tool" data-tool="components"><span class="ico">⊕</span><span>Parts</span></button>
+      <button class="tool" data-tool="material"><span class="ico">◐</span><span>Material</span></button>
+    </aside>
+
+    <section class="viewport-wrap">
+      <canvas id="canvas"></canvas>
+      <div class="view-top">
+        <div class="chip" id="viewChip">Pendant · Front view</div>
+        <div class="chip" id="measureChip">28.0 × 32.0 × 3.0 mm</div>
       </div>
-    </div>
-  </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
-    <button class="magic" id="variant">✦ Generar variante K2</button>
-    <button class="secondary" id="reset">Restablecer</button>
-  </div>
-</section>
+      <div class="view-controls">
+        <button id="frontBtn">F</button>
+        <button id="isoBtn">◈</button>
+        <button id="fitBtn">⌖</button>
+      </div>
 
-<section class="summary">
-  <div>
-    <div class="eyebrow" style="color:rgba(244,239,231,.55)">TU DISEÑO</div>
-    <h3 id="designId">K2-N0001</h3>
-    <p id="summaryText">Cadena fina · 45 cm<br>Plata · Círculo · Sin piedra</p>
-  </div>
-  <button class="cta">Solicitar fabricación →</button>
-</section>
+      <div class="ai-card">
+        <div class="ai-row">
+          <input id="aiPrompt" placeholder="Ej.: hazlo más orgánico, alarga la lágrima y añade un zafiro...">
+          <button id="aiApply">Aplicar</button>
+        </div>
+      </div>
+    </section>
 
-<footer>
-  <span>K2 VISUALIZE · V2</span>
-  <span>Combina. Diseña. Personaliza.</span>
-</footer>
+    <aside class="inspector" id="inspector">
+      <div class="inspector-head">
+        <div class="kicker">PARAMETRIC DESIGN</div>
+        <h2 id="panelTitle">Pendant</h2>
+      </div>
+
+      <div class="section" data-section="templates">
+        <div class="section-title"><b>Template</b><span>6 bases</span></div>
+        <div class="templates">
+          <button class="template active" data-shape="oval">◯</button>
+          <button class="template" data-shape="drop">♢</button>
+          <button class="template" data-shape="rect">▭</button>
+          <button class="template" data-shape="bar">▯</button>
+          <button class="template" data-shape="triangle">△</button>
+          <button class="template" data-shape="organic">◌</button>
+        </div>
+      </div>
+
+      <div class="section" data-section="design">
+        <div class="section-title"><b>Dimensions</b><span>mm</span></div>
+        <div class="field"><div class="field-line"><span>Width</span><span class="value" id="widthVal">28.0</span></div><input id="width" type="range" min="14" max="55" step=".5" value="28"></div>
+        <div class="field"><div class="field-line"><span>Height</span><span class="value" id="heightVal">32.0</span></div><input id="height" type="range" min="16" max="65" step=".5" value="32"></div>
+        <div class="field"><div class="field-line"><span>Thickness</span><span class="value" id="thicknessVal">3.0</span></div><input id="thickness" type="range" min="1.2" max="7" step=".1" value="3"></div>
+        <div class="field"><div class="field-line"><span>Edge radius</span><span class="value" id="edgeVal">1.0</span></div><input id="edge" type="range" min="0" max="4" step=".1" value="1"></div>
+        <div class="field"><div class="field-line"><span>Organic variation</span><span class="value" id="organicVal">8%</span></div><input id="organic" type="range" min="0" max="100" value="8"></div>
+      </div>
+
+      <div class="section" data-section="components">
+        <div class="section-title"><b>Components</b><span>Bail</span></div>
+        <div class="row2">
+          <select id="bailType"><option value="round">Round bail</option><option value="hidden">Hidden bail</option><option value="wide">Wide bail</option></select>
+          <select id="chainType"><option value="none">No chain</option><option value="fine" selected>Fine chain</option><option value="cable">Cable chain</option></select>
+        </div>
+      </div>
+
+      <div class="section" data-section="material">
+        <div class="section-title"><b>Metal</b><span id="metalLabel">Silver 925</span></div>
+        <div class="swatches">
+          <button class="swatch active" data-metal="silver" title="Silver" style="background:#cfd3d6"></button>
+          <button class="swatch" data-metal="gold" title="Yellow Gold" style="background:#d7a83e"></button>
+          <button class="swatch" data-metal="rose" title="Rose Gold" style="background:#ca8872"></button>
+          <button class="swatch" data-metal="dark" title="Oxidized" style="background:#383735"></button>
+        </div>
+        <div class="field"><div class="field-line"><span>Surface roughness</span><span class="value" id="roughVal">16%</span></div><input id="rough" type="range" min="0" max="100" value="16"></div>
+      </div>
+
+      <div class="section" data-section="stones">
+        <div class="section-title"><b>Stone setting</b><span id="stoneCount">0 stones</span></div>
+        <div class="stone-list">
+          <button class="stone active" data-stone="none"><i style="background:#ddd"></i>None</button>
+          <button class="stone" data-stone="diamond"><i style="background:#eefcff"></i>Diamond</button>
+          <button class="stone" data-stone="sapphire"><i style="background:#2755b3"></i>Sapphire</button>
+          <button class="stone" data-stone="ruby"><i style="background:#b8253d"></i>Ruby</button>
+          <button class="stone" data-stone="emerald"><i style="background:#19815d"></i>Emerald</button>
+          <button class="stone" data-stone="amethyst"><i style="background:#7851a8"></i>Amethyst</button>
+        </div>
+        <div class="field"><div class="field-line"><span>Stone diameter</span><span class="value" id="stoneSizeVal">3.0 mm</span></div><input id="stoneSize" type="range" min="1.5" max="8" step=".1" value="3"></div>
+        <div class="row2">
+          <div class="field"><label style="font-size:9px;color:#777">X position</label><input id="stoneX" class="num" type="range" min="-35" max="35" value="18"></div>
+          <div class="field"><label style="font-size:9px;color:#777">Y position</label><input id="stoneY" class="num" type="range" min="-35" max="35" value="5"></div>
+        </div>
+        <button class="add-btn" id="addStone">+ Add another stone</button>
+      </div>
+
+      <div class="section" data-section="text">
+        <div class="section-title"><b>Text / engraving</b><span>front</span></div>
+        <input id="engraving" type="text" maxlength="18" placeholder="K2 / name / date">
+        <div class="field"><div class="field-line"><span>Emboss depth</span><span class="value" id="engraveDepthVal">0.3 mm</span></div><input id="engraveDepth" type="range" min=".1" max="1.2" step=".1" value=".3"></div>
+      </div>
+
+      <div class="section" data-section="settings">
+        <div class="section-title"><b>Production</b><span>live</span></div>
+        <div class="stats">
+          <div class="stat"><span>Estimated weight</span><b id="weight">8.4 g</b></div>
+          <div class="stat"><span>Volume</span><b id="volume">0.8 cm³</b></div>
+          <div class="stat"><span>Min. wall</span><b id="wall">3.0 mm</b></div>
+          <div class="stat"><span>Stone count</span><b id="stoneStat">0</b></div>
+        </div>
+        <div class="valid" id="validState">Production-ready geometry</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <div class="status-left"><span>Perspective</span><span>Grid 1 mm</span><span id="autosave">Autosaved</span></div>
+    <div class="status-right"><span id="statusDims">28 × 32 × 3 mm</span><span id="statusWeight">8.4 g</span></div>
+  </footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 <script>
 (function(){
-  if(!window.THREE){ alert('No se pudo cargar el motor 3D.'); return; }
+  if(!window.THREE){alert('No se pudo cargar Three.js');return}
   const T=window.THREE;
 
-  const MATERIALS={
-    silver:{label:'Plata',color:0xc9cdd0,rough:.22},
-    gold:{label:'Oro',color:0xd2a43e,rough:.18},
-    rose:{label:'Oro rosa',color:0xc78672,rough:.22},
-    dark:{label:'Negro',color:0x343331,rough:.34}
+  const metals={
+    silver:{label:'Silver 925',color:0xcbd0d3,density:10.36,rough:.19},
+    gold:{label:'18K Yellow Gold',color:0xd3a23b,density:15.6,rough:.16},
+    rose:{label:'18K Rose Gold',color:0xc98470,density:15.2,rough:.2},
+    dark:{label:'Oxidized Silver',color:0x343331,density:10.36,rough:.34}
   };
-  const CHAINS={
-    fine:{label:'Cadena fina',tube:.035,linkScale:1.0},
-    classic:{label:'Clásica',tube:.055,linkScale:1.0},
-    large:{label:'Eslabón grande',tube:.085,linkScale:1.15},
-    black:{label:'Negra',tube:.055,linkScale:1.0}
-  };
-  const SHAPES={
-    circle:'Círculo',drop:'Lágrima',bar:'Barra',rect:'Rectángulo',triangle:'Triángulo',organic:'Orgánico'
-  };
-  const GEMS={
-    none:{label:'Sin piedra',color:0xffffff},
-    diamond:{label:'Diamante',color:0xffffff},
-    sapphire:{label:'Zafiro',color:0x2454b8},
-    ruby:{label:'Rubí',color:0xb6233d},
-    emerald:{label:'Esmeralda',color:0x16815c},
-    amethyst:{label:'Amatista',color:0x7751a8}
-  };
+  const gemColors={diamond:0xffffff,sapphire:0x2552b1,ruby:0xb7223b,emerald:0x13815a,amethyst:0x7550a7};
 
   const state={
-    chain:'fine',chainLen:45,shape:'circle',size:28,thick:3,
-    material:'silver',organic:24,rough:18,
-    gem:'none',gemSize:4,
-    engraving:'',engravingPos:'front',
-    seed:1
+    shape:'oval',width:28,height:32,thickness:3,edge:1,organic:8,
+    metal:'silver',rough:16,bail:'round',chain:'fine',
+    stone:'none',stoneSize:3,stoneX:18,stoneY:5,stones:[],
+    engraving:'',engraveDepth:.3,seed:3
   };
-
   let history=[],future=[];
   const clone=()=>JSON.parse(JSON.stringify(state));
-  function remember(){history.push(clone());if(history.length>30)history.shift();future=[]}
+  const remember=()=>{history.push(clone());if(history.length>35)history.shift();future=[]};
 
-  const canvas=document.getElementById('canvas');
-  const renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});
+  const renderer=new T.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   renderer.outputColorSpace=T.SRGBColorSpace;
-  renderer.toneMapping=T.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.15;
+  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
 
   const scene=new T.Scene();
-  const camera=new T.PerspectiveCamera(33,1,.1,100);
-  camera.position.set(0,0,10);
+  scene.background=new T.Color(0xefefeb);
+  const camera=new T.PerspectiveCamera(30,1,.1,100);camera.position.set(0,0,11);
 
-  const group=new T.Group();
-  group.rotation.x=.05;
-  scene.add(group);
+  const root=new T.Group();root.rotation.x=-.08;root.rotation.y=.18;scene.add(root);
 
-  let light=new T.DirectionalLight(0xffffff,5.6);light.position.set(4,5,7);scene.add(light);
-  light=new T.DirectionalLight(0xdce6ff,2.8);light.position.set(-5,1,3);scene.add(light);
-  light=new T.DirectionalLight(0xffdfba,3.0);light.position.set(2,-4,3);scene.add(light);
-  scene.add(new T.HemisphereLight(0xffffff,0x786a5d,2.0));
+  let l=new T.DirectionalLight(0xffffff,5.6);l.position.set(4,5,7);l.castShadow=true;scene.add(l);
+  l=new T.DirectionalLight(0xdce5ff,2.6);l.position.set(-4,2,4);scene.add(l);
+  l=new T.DirectionalLight(0xffe0bd,2.8);l.position.set(1,-4,3);scene.add(l);
+  scene.add(new T.HemisphereLight(0xffffff,0x686058,2.2));
+
+  const grid=new T.GridHelper(12,24,0xd4d4cf,0xe3e3df);grid.rotation.x=Math.PI/2;grid.position.z=-1.6;scene.add(grid);
 
   let parts=[];
-
-  function mat(){
-    const m=MATERIALS[state.material];
-    let color=m.color;
-    if(state.chain==='black') color=0x2f2e2c;
-    return new T.MeshStandardMaterial({
-      color,metalness:1,
-      roughness:T.MathUtils.clamp(m.rough+(state.rough/100)*.35,.08,.72)
-    });
-  }
-
+  function add(o){root.add(o);parts.push(o);return o}
   function clear(){
-    parts.forEach(o=>{
-      group.remove(o);
-      if(o.geometry)o.geometry.dispose();
-      if(o.material){
-        if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());
-        else o.material.dispose();
-      }
-    });
+    parts.forEach(o=>{root.remove(o);o.geometry?.dispose?.();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}});
     parts=[];
   }
+  function metalMat(){
+    const m=metals[state.metal];
+    return new T.MeshStandardMaterial({color:m.color,metalness:1,roughness:T.MathUtils.clamp(m.rough+state.rough*.0035,.07,.7)});
+  }
 
-  function add(obj){group.add(obj);parts.push(obj);return obj}
+  function shapePath(){
+    const sx=state.width/28,sy=state.height/32,s=new T.Shape();
+    if(state.shape==='oval'){
+      s.absellipse(0,0,.78*sx,.95*sy,0,Math.PI*2,false,0);
+    }else if(state.shape==='drop'){
+      s.moveTo(0,1.08*sy);s.bezierCurveTo(.8*sx,.52*sy,.82*sx,-.5*sy,0,-1.0*sy);s.bezierCurveTo(-.82*sx,-.5*sy,-.8*sx,.52*sy,0,1.08*sy);
+    }else if(state.shape==='rect'){
+      const w=.82*sx,h=.88*sy,r=Math.min(.22,state.edge/4)*Math.min(sx,sy);
+      s.moveTo(-w+r,-h);s.lineTo(w-r,-h);s.quadraticCurveTo(w,-h,w,-h+r);s.lineTo(w,h-r);s.quadraticCurveTo(w,h,w-r,h);s.lineTo(-w+r,h);s.quadraticCurveTo(-w,h,-w,h-r);s.lineTo(-w,-h+r);s.quadraticCurveTo(-w,-h,-w+r,-h)
+    }else if(state.shape==='bar'){
+      const w=.3*sx,h=1.05*sy,r=.15;
+      s.moveTo(-w+r,-h);s.lineTo(w-r,-h);s.quadraticCurveTo(w,-h,w,-h+r);s.lineTo(w,h-r);s.quadraticCurveTo(w,h,w-r,h);s.lineTo(-w+r,h);s.quadraticCurveTo(-w,h,-w,h-r);s.lineTo(-w,-h+r);s.quadraticCurveTo(-w,-h,-w+r,-h)
+    }else if(state.shape==='triangle'){
+      s.moveTo(0,1.0*sy);s.lineTo(.9*sx,-.9*sy);s.lineTo(-.9*sx,-.9*sy);s.closePath()
+    }else{
+      const n=24;
+      for(let i=0;i<n;i++){
+        const a=i/n*Math.PI*2;
+        const rr=1+.11*Math.sin(a*3+state.seed)+.05*Math.sin(a*7+state.seed*.4);
+        const x=Math.cos(a)*.78*sx*rr,y=Math.sin(a)*.92*sy*rr;
+        i?s.lineTo(x,y):s.moveTo(x,y)
+      }s.closePath()
+    }
+    return s
+  }
 
-  function buildChain(material){
-    const chain=CHAINS[state.chain];
-    const spread=2.6+(state.chainLen-40)*.035;
-    const topY=2.9;
-    const pendantY=.15;
+  function pendant(){
+    const depth=.16+state.thickness*.045;
+    const g=new T.ExtrudeGeometry(shapePath(),{
+      depth,bevelEnabled:true,bevelSegments:4,curveSegments:72,
+      bevelSize:.025+state.edge*.014,bevelThickness:.04
+    });
+    g.center();
+    const pos=g.attributes.position,strength=state.organic/100*.045;
+    for(let i=0;i<pos.count;i++){
+      let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+      let w=Math.sin(y*4+state.seed)*strength+Math.sin(x*6+state.seed*.4)*strength*.45;
+      pos.setXYZ(i,x*(1+w),y*(1-w*.35),z)
+    }
+    pos.needsUpdate=true;g.computeVertexNormals();
+    const mesh=add(new T.Mesh(g,metalMat()));mesh.castShadow=true;mesh.receiveShadow=true;
+  }
 
-    const pts=[];
-    const count=84;
+  function bail(){
+    const m=metalMat();
+    if(state.bail==='hidden'){
+      const b=add(new T.Mesh(new T.TorusGeometry(.14,.035,12,48,Math.PI*1.5),m));b.position.set(0,1.22,.02)
+    }else{
+      const rad=state.bail==='wide'?.22:.16,tube=state.bail==='wide'?.055:.04;
+      const b=add(new T.Mesh(new T.TorusGeometry(rad,tube,14,52),m));b.position.set(0,1.2,.02)
+    }
+  }
+
+  function chain(){
+    if(state.chain==='none')return;
+    const m=metalMat(),pts=[],count=75,spread=2.7;
     for(let i=0;i<=count;i++){
-      const t=i/count;
-      const x=(t-.5)*2*spread;
-      const u=Math.abs(t-.5)*2;
-      const y=topY-(1-Math.pow(u,1.8))*(topY-pendantY);
-      pts.push(new T.Vector3(x,y,0));
+      const t=i/count,x=(t-.5)*2*spread,u=Math.abs(t-.5)*2;
+      const y=3.15-(1-Math.pow(u,1.65))*2.05;
+      pts.push(new T.Vector3(x,y,-.04))
     }
     const curve=new T.CatmullRomCurve3(pts);
-    const g=new T.TubeGeometry(curve,180,chain.tube,10,false);
-    add(new T.Mesh(g,material.clone()));
-
-    // small connector ring
-    const ring=new T.Mesh(new T.TorusGeometry(.16,.035,12,48),material.clone());
-    ring.position.set(0,pendantY-.02,0);
-    add(ring);
+    const tube=state.chain==='cable'?.045:.028;
+    add(new T.Mesh(new T.TubeGeometry(curve,170,tube,8,false),m))
   }
 
-  function shape2D(){
-    const s=state.size/28;
-    let shape=new T.Shape();
-
-    if(state.shape==='circle'){
-      shape.absarc(0,0,.92*s,0,Math.PI*2,false);
-    }else if(state.shape==='drop'){
-      shape.moveTo(0,1.12*s);
-      shape.bezierCurveTo(.85*s,.62*s,.88*s,-.45*s,0,-1.10*s);
-      shape.bezierCurveTo(-.88*s,-.45*s,-.85*s,.62*s,0,1.12*s);
-    }else if(state.shape==='bar'){
-      const w=.34*s,h=1.25*s,r=.16*s;
-      shape.moveTo(-w+r,-h); shape.lineTo(w-r,-h);
-      shape.quadraticCurveTo(w,-h,w,-h+r);
-      shape.lineTo(w,h-r); shape.quadraticCurveTo(w,h,w-r,h);
-      shape.lineTo(-w+r,h); shape.quadraticCurveTo(-w,h,-w,h-r);
-      shape.lineTo(-w,-h+r); shape.quadraticCurveTo(-w,-h,-w+r,-h);
-    }else if(state.shape==='rect'){
-      const w=.9*s,h=.7*s,r=.16*s;
-      shape.moveTo(-w+r,-h);shape.lineTo(w-r,-h);shape.quadraticCurveTo(w,-h,w,-h+r);
-      shape.lineTo(w,h-r);shape.quadraticCurveTo(w,h,w-r,h);
-      shape.lineTo(-w+r,h);shape.quadraticCurveTo(-w,h,-w,h-r);
-      shape.lineTo(-w,-h+r);shape.quadraticCurveTo(-w,-h,-w+r,-h);
-    }else if(state.shape==='triangle'){
-      shape.moveTo(0,1.05*s);shape.lineTo(.95*s,-.85*s);shape.lineTo(-.95*s,-.85*s);shape.closePath();
-    }else{
-      const n=18,base=.92*s;
-      for(let i=0;i<n;i++){
-        const a=(i/n)*Math.PI*2;
-        const n1=Math.sin(a*3+state.seed*.7)*.10;
-        const n2=Math.sin(a*7+state.seed*.3)*.05;
-        const r=base*(1+n1+n2+(state.organic/100)*.13*Math.sin(a*5+state.seed));
-        const x=Math.cos(a)*r, y=Math.sin(a)*r;
-        if(i===0)shape.moveTo(x,y); else shape.lineTo(x,y);
-      }
-      shape.closePath();
-    }
-    return shape;
-  }
-
-  function buildPendant(material){
-    const depth=.20+(state.thick-1.5)*.035;
-    const geom=new T.ExtrudeGeometry(shape2D(),{
-      depth,bevelEnabled:true,
-      bevelSegments:3,
-      bevelSize:.05+.04*(state.organic/100),
-      bevelThickness:.04,
-      curveSegments:72
+  function gemAt(type,size,xp,yp,index=0){
+    if(type==='none')return;
+    const gs=(size/3)*.15;
+    const gm=new T.MeshPhysicalMaterial({
+      color:gemColors[type],roughness:type==='diamond'?.02:.06,metalness:0,
+      transmission:type==='diamond'?.55:.12,transparent:true,opacity:.98,clearcoat:1,ior:2.1,thickness:.6
     });
-    geom.center();
-
-    // slight organic deformation
-    const pos=geom.attributes.position;
-    const strength=(state.organic/100)*.055;
-    for(let i=0;i<pos.count;i++){
-      const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
-      const wobble=Math.sin(y*4+state.seed*.9)*strength+Math.sin(x*6+state.seed*.4)*strength*.5;
-      pos.setXYZ(i,x*(1+wobble),y*(1-wobble*.5),z);
-    }
-    pos.needsUpdate=true; geom.computeVertexNormals();
-
-    const pendant=new T.Mesh(geom,material.clone());
-    pendant.position.set(0,-1.42,.10);
-    pendant.rotation.x=-.04;
-    add(pendant);
-
-    // bail
-    const bail=new T.Mesh(new T.TorusGeometry(.18,.04,12,48),material.clone());
-    bail.position.set(0,-.33,.08);
-    add(bail);
-
-    // gem
-    if(state.gem!=='none'){
-      const gemScale=(state.gemSize/4)*.17;
-      const gm=new T.MeshPhysicalMaterial({
-        color:GEMS[state.gem].color,
-        roughness:state.gem==='diamond'?.02:.07,
-        transmission:state.gem==='diamond'?.60:.15,
-        transparent:true,opacity:.98,clearcoat:1,ior:2.1,thickness:.5
-      });
-      const stone=new T.Mesh(new T.OctahedronGeometry(gemScale,3),gm);
-      stone.position.set(.28*(state.size/28),-1.34,.34);
-      stone.rotation.z=Math.PI/4;
-      add(stone);
-
-      const bezel=new T.Mesh(new T.TorusGeometry(gemScale*.95,.035,10,40),material.clone());
-      bezel.position.set(.28*(state.size/28),-1.34,.24);
-      bezel.rotation.x=Math.PI/2;
-      add(bezel);
-    }
+    const x=(xp/35)*.58*(state.width/28),y=(yp/35)*.65*(state.height/32);
+    const stone=add(new T.Mesh(new T.OctahedronGeometry(gs,3),gm));stone.position.set(x,y,.25+state.thickness*.012);stone.rotation.z=Math.PI/4;
+    const bezel=add(new T.Mesh(new T.TorusGeometry(gs*.92,.026,10,40),metalMat()));bezel.position.set(x,y,.18+state.thickness*.01);bezel.rotation.x=Math.PI/2
+  }
+  function stones(){
+    if(state.stone!=='none')gemAt(state.stone,state.stoneSize,state.stoneX,state.stoneY);
+    state.stones.forEach((s,i)=>gemAt(s.type,s.size,s.x,s.y,i+1))
   }
 
   function build(){
-    clear();
-    const material=mat();
-    buildChain(material);
-    buildPendant(material);
-
-    document.getElementById('stageLabel').textContent=
-      CHAINS[state.chain].label+' · '+SHAPES[state.shape];
-
-    document.getElementById('designId').textContent='K2-N'+String(state.seed).padStart(4,'0');
-    document.getElementById('summaryText').innerHTML=
-      CHAINS[state.chain].label+' · '+state.chainLen+' cm<br>'+
-      MATERIALS[state.material].label+' · '+SHAPES[state.shape]+' · '+GEMS[state.gem].label;
+    clear();chain();pendant();bail();stones();updateUIStats()
   }
 
-  function resize(){
-    const r=canvas.parentElement.getBoundingClientRect();
-    renderer.setSize(r.width,r.height,false);
-    camera.aspect=r.width/r.height;
-    camera.updateProjectionMatrix();
+  function volumeCm3(){
+    const areaFactor={oval:.78,drop:.66,rect:.82,bar:.32,triangle:.48,organic:.70}[state.shape]||.7;
+    return (state.width*state.height*state.thickness*areaFactor)/1000
   }
+  function updateUIStats(){
+    const vol=volumeCm3(),weight=vol*metals[state.metal].density*.72,stoneCount=(state.stone==='none'?0:1)+state.stones.length;
+    document.getElementById('volume').textContent=vol.toFixed(2)+' cm³';
+    document.getElementById('weight').textContent=weight.toFixed(1)+' g';
+    document.getElementById('wall').textContent=state.thickness.toFixed(1)+' mm';
+    document.getElementById('stoneStat').textContent=stoneCount;
+    document.getElementById('stoneCount').textContent=stoneCount+' stone'+(stoneCount===1?'':'s');
+    document.getElementById('statusWeight').textContent=weight.toFixed(1)+' g';
+    const dims=state.width.toFixed(1)+' × '+state.height.toFixed(1)+' × '+state.thickness.toFixed(1)+' mm';
+    document.getElementById('measureChip').textContent=dims;document.getElementById('statusDims').textContent=dims;
+    const valid=state.thickness>=1.5&&state.width>=14&&state.height>=16;
+    document.getElementById('validState').textContent=valid?'Production-ready geometry':'Review manufacturing constraints';
+    document.getElementById('validState').style.color=valid?'#2d8b57':'#b27621'
+  }
+
+  const canvas=document.getElementById('canvas');
+  function resize(){const r=canvas.parentElement.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
   addEventListener('resize',resize);resize();
 
-  let dragging=false,lastX=0,lastY=0,targetY=0,targetX=.05,zoom=10,pinch=null;
-  canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture?.(e.pointerId)});
-  canvas.addEventListener('pointermove',e=>{
-    if(!dragging)return;
-    targetY+=(e.clientX-lastX)*.006;
-    targetX+=(e.clientY-lastY)*.004;
-    lastX=e.clientX;lastY=e.clientY;
-  });
-  canvas.addEventListener('pointerup',()=>dragging=false);
-  canvas.addEventListener('pointercancel',()=>dragging=false);
-  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=T.MathUtils.clamp(zoom+e.deltaY*.007,7.2,13.5)},{passive:false});
-  canvas.addEventListener('touchmove',e=>{
-    if(e.touches.length===2){
-      const a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-      if(pinch!==null)zoom=T.MathUtils.clamp(zoom-(d-pinch)*.012,7.2,13.5);
-      pinch=d;
-    }
-  },{passive:true});
+  let drag=false,lx=0,ly=0,ty=root.rotation.y,tx=root.rotation.x,zoom=11,pinch=null;
+  canvas.onpointerdown=e=>{drag=true;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture?.(e.pointerId)};
+  canvas.onpointermove=e=>{if(!drag)return;ty+=(e.clientX-lx)*.006;tx+=(e.clientY-ly)*.004;lx=e.clientX;ly=e.clientY};
+  canvas.onpointerup=canvas.onpointercancel=()=>drag=false;
+  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=T.MathUtils.clamp(zoom+e.deltaY*.007,7.5,15)},{passive:false});
+  canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);if(pinch!==null)zoom=T.MathUtils.clamp(zoom-(d-pinch)*.012,7.5,15);pinch=d}},{passive:true});
   canvas.addEventListener('touchend',()=>pinch=null);
+  function anim(){root.rotation.y+=(ty-root.rotation.y)*.08;root.rotation.x+=(tx-root.rotation.x)*.08;camera.position.z+=(zoom-camera.position.z)*.08;renderer.render(scene,camera);requestAnimationFrame(anim)}anim();
 
-  function animate(){
-    group.rotation.y+=(targetY-group.rotation.y)*.08;
-    group.rotation.x+=(targetX-group.rotation.x)*.08;
-    camera.position.z+=(zoom-camera.position.z)*.08;
-    renderer.render(scene,camera);
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
-    document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');
-  });
-
-  function bind(attr,key){
-    document.querySelectorAll('[data-'+attr+']').forEach(b=>b.onclick=()=>{
-      remember();state[key]=b.dataset[attr];
-      document.querySelectorAll('[data-'+attr+']').forEach(x=>x.classList.toggle('active',x===b));
-      build();
-    });
-  }
-  bind('chain','chain');bind('shape','shape');bind('material','material');bind('gem','gem');bind('engravingpos','engravingPos');
-
-  function bindRange(id,key,label,fmt){
-    const el=document.getElementById(id),lab=document.getElementById(label);
-    el.onchange=remember;
-    el.oninput=()=>{state[key]=+el.value;lab.textContent=fmt(state[key]);build()};
-  }
-  bindRange('chainLen','chainLen','chainLenVal',v=>v+' cm');
-  bindRange('size','size','sizeVal',v=>v+' mm');
-  bindRange('thick','thick','thickVal',v=>Number(v).toFixed(1)+' mm');
+  function markSaved(){document.getElementById('autosave').textContent='Saving…';clearTimeout(markSaved.t);markSaved.t=setTimeout(()=>document.getElementById('autosave').textContent='Autosaved',450)}
+  function bindRange(id,key,valId,fmt=v=>v){const e=document.getElementById(id);e.onpointerdown=remember;e.oninput=()=>{state[key]=+e.value;document.getElementById(valId).textContent=fmt(state[key]);build();markSaved()}}
+  bindRange('width','width','widthVal',v=>v.toFixed(1));
+  bindRange('height','height','heightVal',v=>v.toFixed(1));
+  bindRange('thickness','thickness','thicknessVal',v=>v.toFixed(1));
+  bindRange('edge','edge','edgeVal',v=>v.toFixed(1));
   bindRange('organic','organic','organicVal',v=>v+'%');
   bindRange('rough','rough','roughVal',v=>v+'%');
-  bindRange('gemSize','gemSize','gemSizeVal',v=>Number(v).toFixed(1)+' mm');
+  bindRange('stoneSize','stoneSize','stoneSizeVal',v=>v.toFixed(1)+' mm');
+  ['stoneX','stoneY'].forEach(id=>{const e=document.getElementById(id);e.onpointerdown=remember;e.oninput=()=>{state[id]=+e.value;build()}});
 
-  document.getElementById('engraving').oninput=e=>{state.engraving=e.target.value};
+  document.querySelectorAll('[data-shape]').forEach(b=>b.onclick=()=>{remember();state.shape=b.dataset.shape;document.querySelectorAll('[data-shape]').forEach(x=>x.classList.toggle('active',x===b));build()});
+  document.querySelectorAll('[data-metal]').forEach(b=>b.onclick=()=>{remember();state.metal=b.dataset.metal;document.querySelectorAll('[data-metal]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('metalLabel').textContent=metals[state.metal].label;build()});
+  document.querySelectorAll('[data-stone]').forEach(b=>b.onclick=()=>{remember();state.stone=b.dataset.stone;document.querySelectorAll('[data-stone]').forEach(x=>x.classList.toggle('active',x===b));build()});
 
-  document.getElementById('variant').onclick=()=>{
-    remember();
-    state.seed=Math.floor(Math.random()*9999)+1;
-    state.organic=Math.min(100,Math.max(15,state.organic+Math.floor(Math.random()*31)-15));
-    if(Math.random()>.5)state.shape='organic';
-    document.getElementById('organic').value=state.organic;
+  document.getElementById('bailType').onchange=e=>{remember();state.bail=e.target.value;build()};
+  document.getElementById('chainType').onchange=e=>{remember();state.chain=e.target.value;build()};
+  document.getElementById('engraving').oninput=e=>{state.engraving=e.target.value;markSaved()};
+  document.getElementById('engraveDepth').oninput=e=>{state.engraveDepth=+e.target.value;document.getElementById('engraveDepthVal').textContent=state.engraveDepth.toFixed(1)+' mm'};
+
+  document.getElementById('addStone').onclick=()=>{if(state.stone==='none')return;remember();const n=state.stones.length;state.stones.push({type:state.stone,size:state.stoneSize,x:-18+n*14,y:-12+n*9});build()};
+
+  document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b));
+    const map={design:'Dimensions',templates:'Template',stones:'Stone setting',settings:'Production',text:'Text / engraving',components:'Components',material:'Metal'};
+    document.getElementById('panelTitle').textContent=map[b.dataset.tool]||'Pendant';
+    const target=document.querySelector('[data-section="'+b.dataset.tool+'"]');
+    target?.scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('inspector').classList.add('open')
+  });
+
+  document.getElementById('frontBtn').onclick=()=>{tx=0;ty=0;document.getElementById('viewChip').textContent='Pendant · Front view'};
+  document.getElementById('isoBtn').onclick=()=>{tx=-.25;ty=.55;document.getElementById('viewChip').textContent='Pendant · Perspective'};
+  document.getElementById('fitBtn').onclick=()=>{zoom=11};
+
+  document.getElementById('aiApply').onclick=()=>{
+    const q=document.getElementById('aiPrompt').value.toLowerCase();
+    if(!q.trim())return;remember();
+    if(q.includes('orgán')){state.shape='organic';state.organic=Math.max(state.organic,55)}
+    if(q.includes('lágrima'))state.shape='drop';
+    if(q.includes('rect'))state.shape='rect';
+    if(q.includes('largo')||q.includes('alarga'))state.height=Math.min(65,state.height+8);
+    if(q.includes('ancho'))state.width=Math.min(55,state.width+6);
+    if(q.includes('fino'))state.thickness=Math.max(1.5,state.thickness-.8);
+    if(q.includes('zafiro'))state.stone='sapphire';
+    if(q.includes('rubí')||q.includes('rubi'))state.stone='ruby';
+    if(q.includes('diamante'))state.stone='diamond';
+    state.seed=Math.floor(Math.random()*1000);sync();build()
+  };
+
+  document.getElementById('undo').onclick=()=>{if(!history.length)return;future.push(clone());Object.assign(state,history.pop());sync();build()};
+  document.getElementById('redo').onclick=()=>{if(!future.length)return;history.push(clone());Object.assign(state,future.pop());sync();build()};
+  document.getElementById('save').onclick=e=>{localStorage.setItem('k2-v3',JSON.stringify(state));e.target.textContent='Saved ✓';setTimeout(()=>e.target.textContent='Save',1000)};
+  document.getElementById('exportBtn').onclick=()=>{
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='k2-design.json';a.click();URL.revokeObjectURL(a.href)
+  };
+  document.getElementById('panelToggle').onclick=()=>document.getElementById('inspector').classList.toggle('open');
+
+  function sync(){
+    const ids=['width','height','thickness','edge','organic','rough','stoneSize','stoneX','stoneY'];
+    ids.forEach(id=>document.getElementById(id).value=state[id]);
+    document.getElementById('widthVal').textContent=state.width.toFixed(1);
+    document.getElementById('heightVal').textContent=state.height.toFixed(1);
+    document.getElementById('thicknessVal').textContent=state.thickness.toFixed(1);
+    document.getElementById('edgeVal').textContent=state.edge.toFixed(1);
     document.getElementById('organicVal').textContent=state.organic+'%';
+    document.getElementById('roughVal').textContent=state.rough+'%';
+    document.getElementById('stoneSizeVal').textContent=state.stoneSize.toFixed(1)+' mm';
+    document.getElementById('bailType').value=state.bail;document.getElementById('chainType').value=state.chain;
     document.querySelectorAll('[data-shape]').forEach(x=>x.classList.toggle('active',x.dataset.shape===state.shape));
-    build();
-  };
-
-  document.getElementById('reset').onclick=()=>{
-    remember();
-    Object.assign(state,{chain:'fine',chainLen:45,shape:'circle',size:28,thick:3,material:'silver',organic:24,rough:18,gem:'none',gemSize:4,engraving:'',engravingPos:'front',seed:1});
-    syncUI();build();
-  };
-
-  document.getElementById('undo').onclick=()=>{
-    if(!history.length)return;
-    future.push(clone());Object.assign(state,history.pop());syncUI();build();
-  };
-  document.getElementById('redo').onclick=()=>{
-    if(!future.length)return;
-    history.push(clone());Object.assign(state,future.pop());syncUI();build();
-  };
-
-  document.getElementById('save').onclick=e=>{
-    localStorage.setItem('k2-visualize-v2',JSON.stringify(state));
-    e.target.textContent='Guardado ✓';setTimeout(()=>e.target.textContent='Guardar',1200);
-  };
-
-  function syncUI(){
-    document.querySelectorAll('[data-chain]').forEach(x=>x.classList.toggle('active',x.dataset.chain===state.chain));
-    document.querySelectorAll('[data-shape]').forEach(x=>x.classList.toggle('active',x.dataset.shape===state.shape));
-    document.querySelectorAll('[data-material]').forEach(x=>x.classList.toggle('active',x.dataset.material===state.material));
-    document.querySelectorAll('[data-gem]').forEach(x=>x.classList.toggle('active',x.dataset.gem===state.gem));
-    document.querySelectorAll('[data-engravingpos]').forEach(x=>x.classList.toggle('active',x.dataset.engravingpos===state.engravingPos));
-
-    const pairs=[
-      ['chainLen',state.chainLen,'chainLenVal',state.chainLen+' cm'],
-      ['size',state.size,'sizeVal',state.size+' mm'],
-      ['thick',state.thick,'thickVal',Number(state.thick).toFixed(1)+' mm'],
-      ['organic',state.organic,'organicVal',state.organic+'%'],
-      ['rough',state.rough,'roughVal',state.rough+'%'],
-      ['gemSize',state.gemSize,'gemSizeVal',Number(state.gemSize).toFixed(1)+' mm']
-    ];
-    pairs.forEach(([id,v,l,t])=>{document.getElementById(id).value=v;document.getElementById(l).textContent=t});
-    document.getElementById('engraving').value=state.engraving;
+    document.querySelectorAll('[data-metal]').forEach(x=>x.classList.toggle('active',x.dataset.metal===state.metal));
+    document.querySelectorAll('[data-stone]').forEach(x=>x.classList.toggle('active',x.dataset.stone===state.stone));
+    document.getElementById('metalLabel').textContent=metals[state.metal].label
   }
 
-  try{
-    const saved=JSON.parse(localStorage.getItem('k2-visualize-v2'));
-    if(saved)Object.assign(state,saved);
-  }catch(e){}
-
-  syncUI();
-  build();
+  try{const saved=JSON.parse(localStorage.getItem('k2-v3'));if(saved)Object.assign(state,saved)}catch(e){}
+  sync();build();
 })();
 </script>
 </body>
