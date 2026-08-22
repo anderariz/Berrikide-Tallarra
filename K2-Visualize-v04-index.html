@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3f0e9">
+<title>K2 Visualize</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#191917;background:#f3f0e9}*{box-sizing:border-box}body{margin:0;background:#f3f0e9}.app{max-width:1300px;margin:auto;padding:max(18px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #0002;padding:8px 0 16px}.brand{display:flex;align-items:baseline;gap:10px}.brand b{font-family:Georgia,serif;font-size:31px}.brand small{font-size:10px;letter-spacing:.22em;opacity:.45}.save{border:1px solid #0002;background:#fff7;border-radius:999px;padding:10px 16px}.hero{display:grid;grid-template-columns:.8fr 1.2fr;gap:34px;align-items:center;padding:36px 0 22px}.eyebrow{font-size:10px;letter-spacing:.22em;font-weight:700;opacity:.45}h1{font-family:Georgia,serif;font-size:clamp(46px,6vw,82px);line-height:.95;letter-spacing:-.045em;font-weight:500;margin:14px 0}.viewer{position:relative;height:min(62vw,580px);min-height:420px;border-radius:30px;overflow:hidden;background:radial-gradient(circle at 50% 38%,#fff,#eee8df 56%,#ddd4c7);box-shadow:0 24px 70px #2f281d18}canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.badge{position:absolute;left:14px;top:14px;background:#ffffffc7;border:1px solid #fff;border-radius:999px;padding:9px 12px;font-size:11px;display:flex;gap:8px;align-items:center}.dot{width:7px;height:7px;border-radius:50%;background:#49895f}.hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:10px;opacity:.45;white-space:nowrap}.tabs{display:flex;gap:5px;overflow:auto;border-bottom:1px solid #0002;padding:8px 0 16px}.tabs button{border:0;background:transparent;padding:12px 14px;border-radius:999px;color:#0008;white-space:nowrap}.tabs button.active{background:#191917;color:#fff}.panel{display:none;max-width:960px;margin:auto;padding:30px 0 42px}.panel.active{display:block}.panel h2{font-family:Georgia,serif;font-size:30px;font-weight:500;margin:0 0 7px}.panel>p{font-size:13px;opacity:.55;margin:0 0 22px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.opt{min-height:68px;border:1px solid #0002;background:#ffffff55;border-radius:17px;padding:12px;display:flex;align-items:center;justify-content:center;gap:9px}.opt.active{border-color:#191917;box-shadow:inset 0 0 0 1px #191917;background:#ffffffaa}.sw{width:18px;height:18px;border-radius:50%;border:1px solid #0002}.slider{display:block;margin:24px 0}.slider div{display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px}.slider input{width:100%;accent-color:#191917}.magic{border:0;background:#191917;color:white;border-radius:999px;padding:14px 18px}.summary{background:#191917;color:#f5f0e8;border-radius:28px;min-height:215px;padding:30px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}.summary h2{font-family:Georgia,serif;font-size:40px;font-weight:500;margin:10px 0 5px}.summary p{font-size:12px;opacity:.6;line-height:1.6}.cta{border:0;border-radius:999px;background:#f5f0e8;color:#191917;padding:14px 18px}footer{font-size:9px;letter-spacing:.12em;opacity:.35;display:flex;justify-content:space-between;padding-top:20px}#error{display:none;background:#fff2f2;color:#8b1d1d;border:1px solid #dba3a3;border-radius:14px;padding:14px;margin:18px 0;font-size:13px;line-height:1.5}
+@media(max-width:820px){.hero{display:flex;flex-direction:column;gap:18px;padding-top:28px}.headline{width:100%}h1{font-size:clamp(44px,13vw,66px)}.viewer{width:100%;height:52vh;min-height:400px}.grid{grid-template-columns:repeat(2,1fr)}.summary{flex-direction:column;align-items:stretch;min-height:260px}.cta{width:100%}footer{flex-direction:column;gap:7px}.brand small{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand"><b>K2</b><small>VISUALIZE</small></div><button class="save" id="save">Guardar</button></header>
+<div id="error"></div>
+<section class="hero"><div class="headline"><div class="eyebrow">DISEÑA TU PIEZA</div><h1>Una joya que solo<br>puede ser tuya.</h1></div><div class="viewer"><canvas id="canvas"></canvas><div class="badge"><span class="dot"></span><span id="status">Diseño fabricable</span></div><div class="hint">Arrastra para girar</div></div></section>
+<nav class="tabs"><button class="active" data-tab="forma">Forma</button><button data-tab="material">Material</button><button data-tab="imperfeccion">Imperfección</button><button data-tab="piedras">Piedras</button></nav>
+<section class="panel active" id="forma"><h2>Elige la forma</h2><p>Empieza con una geometría base.</p><div class="grid"><button class="opt active" data-form="classic">Clásica</button><button class="opt" data-form="soft">Suave</button><button class="opt" data-form="bold">Ancha</button><button class="opt" data-form="organic">Orgánica</button></div></section>
+<section class="panel" id="material"><h2>Material</h2><p>El acabado cambia en tiempo real.</p><div class="grid"><button class="opt active" data-material="silver"><span class="sw" style="background:#cfd2d4"></span>Plata 925</button><button class="opt" data-material="gold"><span class="sw" style="background:#d7ad54"></span>Oro</button><button class="opt" data-material="rose"><span class="sw" style="background:#c98977"></span>Oro rosa</button><button class="opt" data-material="whitegold"><span class="sw" style="background:#e0ddd2"></span>Oro blanco</button></div></section>
+<section class="panel" id="imperfeccion"><h2>Hazlo imperfecto</h2><p>Introduce variaciones orgánicas.</p><label class="slider"><div><span>Organicidad</span><b id="iv">18%</b></div><input id="ir" type="range" min="0" max="100" value="18"></label><label class="slider"><div><span>Textura superficial</span><b id="rv">22%</b></div><input id="rr" type="range" min="0" max="100" value="22"></label><button class="magic" id="unique">✦ Hazlo único</button></section>
+
+<section class="panel" id="piedras"><h2>Piedras</h2><p>Añade una piedra al diseño.</p><div class="grid"><button class="opt active" data-gem="none">Sin piedra</button><button class="opt" data-gem="diamond">Diamante</button><button class="opt" data-gem="sapphire">Zafiro</button><button class="opt" data-gem="ruby">Rubí</button><button class="opt" data-gem="emerald">Esmeralda</button></div></section>
+<section class="summary"><div><div class="eyebrow">TU PIEZA</div><h2 id="design">K2-00004</h2><p id="sum">Plata 925 · Clásica<br>Sin piedra</p></div><button class="cta">Solicitar fabricación →</button></section>
+<footer><span>K2 VISUALIZE · v0.4 SINGLE FILE</span><span>Diseñas la idea. K2 la convierte en una joya.</span></footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script>
+(()=>{const E=document.getElementById('error');if(!window.THREE){E.style.display='block';E.textContent='No se pudo cargar el motor 3D. Recarga la página con conexión a internet.';return}const T=THREE,M={silver:{l:'Plata 925',c:0xc9cdd0,r:.23},gold:{l:'Oro',c:0xd3a43c,r:.20},rose:{l:'Oro rosa',c:0xc47f69,r:.23},whitegold:{l:'Oro blanco',c:0xdcd8cd,r:.18}},F={classic:{l:'Clásica',R:2.05,t:.42},soft:{l:'Suave',R:2.05,t:.50},bold:{l:'Ancha',R:2,t:.67},organic:{l:'Orgánica',R:2.03,t:.53}},A={none:'Sin cenizas',fused:'Fusionadas',chamber:'Cámara interior',visible:'Visibles'},G={none:{l:'Sin piedra',c:0xd7d7d7},diamond:{l:'Diamante',c:0xeaf9ff},sapphire:{l:'Zafiro',c:0x2358bb},ruby:{l:'Rubí',c:0xb8203a},emerald:{l:'Esmeralda',c:0x16845e}},s={material:'silver',form:'classic',imperfection:18,roughness:22,ashes:'none',gem:'none',seed:4};
+const canvas=document.getElementById('canvas'),renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;const scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,.1,100);camera.position.z=8;const group=new T.Group();group.rotation.x=Math.PI*.34;group.rotation.z=-.24;scene.add(group);let L=new T.DirectionalLight(0xffffff,5.2);L.position.set(3.5,4.5,7);scene.add(L);L=new T.DirectionalLight(0xdce5ff,3);L.position.set(-5,1,3);scene.add(L);L=new T.DirectionalLight(0xffe2bd,3.4);L.position.set(1,-5,2);scene.add(L);scene.add(new T.HemisphereLight(0xffffff,0x6a6258,2));let parts=[];const rnd=(a,i)=>{let x=Math.sin(a*12.9898+i*78.233)*43758.5453;return x-Math.floor(x)};
+function geo(){let p=F[s.form],g=new T.TorusGeometry(p.R,p.t,52,220),pos=g.attributes.position,st=(s.imperfection/100)*(s.form==='organic'?.16:.095);for(let i=0;i<pos.count;i++){let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i),a=Math.atan2(y,x),w=Math.sin(a*3+s.seed*.13)*.48+Math.sin(a*7+s.seed*.07)*.24+(rnd(s.seed,i%31)-.5)*.2,k=1+w*st;pos.setXYZ(i,x*k,y*k,z*(1+w*st*.7))}pos.needsUpdate=true;g.computeVertexNormals();return g}
+function clear(){parts.forEach(o=>{group.remove(o);o.geometry?.dispose();o.material?.dispose()});parts=[]}
+function build(){clear();let m=M[s.material],mat=new T.MeshStandardMaterial({color:m.c,metalness:1,roughness:T.MathUtils.clamp(m.r+s.roughness/100*.35,.08,.7)}),ring=new T.Mesh(geo(),mat);group.add(ring);parts.push(ring);if(s.gem!=='none'){
+     const gm=new T.MeshPhysicalMaterial({
+       color:G[s.gem].c,
+       roughness:.04,
+       metalness:0,
+       transmission:s.gem==='diamond'?.45:.10,
+       transparent:true,
+       opacity:.98,
+       clearcoat:1,
+       clearcoatRoughness:.02
+     });
+
+     const stone=new T.Mesh(new T.OctahedronGeometry(.42,3),gm);
+     stone.position.set(0,2.66,.38);
+     stone.rotation.z=Math.PI/4;
+     stone.scale.set(1.06,1.18,.94);
+     group.add(stone);
+     parts.push(stone);
+
+     const cup=new T.Mesh(
+       new T.CylinderGeometry(.31,.39,.36,28),
+       mat.clone()
+     );
+     cup.rotation.x=Math.PI/2;
+     cup.position.set(0,2.38,.23);
+     group.add(cup);
+     parts.push(cup);
+
+     const prongGeo=new T.CylinderGeometry(.045,.055,.42,10);
+     [
+       [-.25,2.53,.29],
+       [.25,2.53,.29],
+       [0,2.53,.54],
+       [0,2.53,.04]
+     ].forEach(([x,y,z])=>{
+       const prong=new T.Mesh(prongGeo,mat.clone());
+       prong.position.set(x,y,z);
+       prong.rotation.x=Math.PI/2;
+       group.add(prong);
+       parts.push(prong);
+     });
+   }document.getElementById('design').textContent='K2-'+String(s.seed).padStart(5,'0');document.getElementById('sum').innerHTML=M[s.material].l+' · '+F[s.form].l+'<br>'+G[s.gem].l;document.getElementById('status').textContent=s.imperfection>82?'Requiere revisión de K2':'Diseño fabricable'}
+function resize(){let r=canvas.parentElement.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();let drag=false,lx=0,ly=0,tx=group.rotation.x,tz=group.rotation.z;canvas.onpointerdown=e=>{drag=true;lx=e.clientX;ly=e.clientY};canvas.onpointermove=e=>{if(!drag)return;tz+=(e.clientX-lx)*.008;tx+=(e.clientY-ly)*.008;lx=e.clientX;ly=e.clientY};canvas.onpointerup=canvas.onpointercancel=()=>drag=false;(function anim(){group.rotation.x+=(tx-group.rotation.x)*.08;group.rotation.z+=(tz-group.rotation.z)*.08;renderer.render(scene,camera);requestAnimationFrame(anim)})();
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});function bind(a,k){document.querySelectorAll('[data-'+a+']').forEach(b=>b.onclick=()=>{s[k]=b.dataset[a];document.querySelectorAll('[data-'+a+']').forEach(x=>x.classList.toggle('active',x===b));build()})}bind('form','form');bind('material','material');bind('gem','gem');const ir=document.getElementById('ir'),rr=document.getElementById('rr');ir.oninput=()=>{s.imperfection=+ir.value;document.getElementById('iv').textContent=ir.value+'%';build()};rr.oninput=()=>{s.roughness=+rr.value;document.getElementById('rv').textContent=rr.value+'%';build()};document.getElementById('unique').onclick=()=>{s.seed=Math.floor(Math.random()*99999);s.imperfection=25+Math.floor(Math.random()*55);s.roughness=10+Math.floor(Math.random()*55);s.form=Math.random()>.35?'organic':'soft';ir.value=s.imperfection;rr.value=s.roughness;document.getElementById('iv').textContent=s.imperfection+'%';document.getElementById('rv').textContent=s.roughness+'%';document.querySelectorAll('[data-form]').forEach(x=>x.classList.toggle('active',x.dataset.form===s.form));build()};document.getElementById('save').onclick=e=>{localStorage.setItem('k2design',JSON.stringify(s));e.target.textContent='Guardado ✓';setTimeout(()=>e.target.textContent='Guardar',1200)};build()})();
+</script>
+</body>
+</html>
