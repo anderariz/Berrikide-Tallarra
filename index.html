@@ -1,536 +1,2391 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-visualize-standalone>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f6f6f3">
-<title>K2 Visualize — Jewelry Designer</title>
-<style>
-:root{
-  --bg:#f5f5f2;--panel:#fff;--ink:#181816;--muted:#75756d;--line:#e5e5df;
-  --accent:#161614;--soft:#f0f0eb;--green:#2d8b57;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden}
-button,input,select{font:inherit}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent}
-.app{height:100dvh;display:grid;grid-template-rows:58px 1fr 34px}
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 16px;
-  background:#fff;border-bottom:1px solid var(--line);z-index:10
-}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
-  width:34px;height:34px;border-radius:10px;background:#171715;color:#fff;
-  display:grid;place-items:center;font-family:Georgia,serif;font-size:18px
-}
-.brandtxt{display:flex;flex-direction:column;line-height:1.05}
-.brandtxt b{font-size:13px}.brandtxt span{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:3px}
-.file-name{font-size:12px;color:var(--muted)}
-.top-actions{display:flex;gap:7px;align-items:center}
-.top-actions button{
-  border:1px solid var(--line);background:#fff;border-radius:9px;height:34px;padding:0 12px;font-size:12px
-}
-.top-actions .primary{background:#171715;color:#fff;border-color:#171715}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Taller Horizontal</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
 
-.workspace{
-  min-height:0;display:grid;grid-template-columns:68px 1fr 310px;background:#efefeb
-}
-.toolbar{
-  background:#fff;border-right:1px solid var(--line);padding:10px 7px;
-  display:flex;flex-direction:column;align-items:center;gap:6px;overflow-y:auto
-}
-.tool{
-  width:52px;min-height:54px;border:0;background:transparent;border-radius:12px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  color:#66665f;font-size:9px
-}
-.tool .ico{font-size:20px;line-height:1}
-.tool.active{background:#171715;color:#fff}
-.tool:hover:not(.active){background:#f3f3ef}
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 16px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
 
-.viewport-wrap{position:relative;min-width:0;min-height:0;overflow:hidden}
-#canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.view-top{
-  position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none
-}
-.chip{
-  pointer-events:auto;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
-  border:1px solid rgba(0,0,0,.07);box-shadow:0 3px 18px rgba(0,0,0,.05);
-  border-radius:9px;padding:8px 10px;font-size:11px;color:#555
-}
-.view-controls{position:absolute;right:12px;bottom:12px;display:flex;gap:6px}
-.view-controls button{
-  width:36px;height:36px;border:1px solid var(--line);background:rgba(255,255,255,.92);
-  border-radius:9px;font-size:15px
-}
-.ai-card{
-  position:absolute;left:16px;bottom:16px;width:min(420px,calc(100% - 90px));
-  background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:14px;
-  padding:10px;box-shadow:0 8px 26px rgba(0,0,0,.07)
-}
-.ai-row{display:flex;gap:8px}
-.ai-row input{
-  flex:1;border:0;background:#f3f3ef;border-radius:9px;padding:10px 11px;outline:none;font-size:12px
-}
-.ai-row button{border:0;background:#171715;color:#fff;border-radius:9px;padding:0 14px;font-size:12px}
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans:
+    -apple-system-body, ui-sans-serif, -apple-system, system-ui, "Segoe UI",
+    Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 8px);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
 
-.inspector{
-  background:#fff;border-left:1px solid var(--line);overflow-y:auto;min-height:0
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
 }
-.inspector-head{
-  padding:16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:3
-}
-.inspector-head .kicker{font-size:9px;letter-spacing:.14em;color:var(--muted)}
-.inspector-head h2{font-size:17px;margin:5px 0 0}
-.section{padding:15px 16px;border-bottom:1px solid var(--line)}
-.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.section-title b{font-size:12px}.section-title span{font-size:10px;color:var(--muted)}
-.templates{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.template{
-  aspect-ratio:1;border:1px solid var(--line);background:#fafaf7;border-radius:10px;
-  display:grid;place-items:center;font-size:24px;color:#777
-}
-.template.active{border-color:#171715;box-shadow:inset 0 0 0 1px #171715;background:#f3f3ef}
-.field{margin:11px 0}
-.field-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11px}
-.field-line span:first-child{color:#555}.value{font-variant-numeric:tabular-nums;color:#222}
-input[type="range"]{width:100%;accent-color:#171715}
-select,.num,input[type="text"]{
-  width:100%;border:1px solid var(--line);background:#fafaf7;border-radius:9px;padding:8px 9px;outline:none;font-size:11px
-}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.swatches{display:flex;gap:7px;flex-wrap:wrap}
-.swatch{
-  width:31px;height:31px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d7d7d0
-}
-.swatch.active{box-shadow:0 0 0 2px #171715}
-.stone-list{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.stone{
-  min-height:52px;border:1px solid var(--line);background:#fafaf7;border-radius:10px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px
-}
-.stone i{width:15px;height:15px;border-radius:50%;display:block;box-shadow:inset 0 0 4px #fff}
-.stone.active{border-color:#171715;box-shadow:inset 0 0 0 1px #171715}
-.add-btn{width:100%;border:1px dashed #bdbdb5;background:#fafaf7;border-radius:9px;padding:9px;font-size:11px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:#f7f7f3;border-radius:10px;padding:10px}
-.stat span{display:block;font-size:9px;color:var(--muted);margin-bottom:4px}.stat b{font-size:13px}
-.valid{display:flex;align-items:center;gap:7px;color:var(--green);font-size:11px;margin-top:10px}
-.valid:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
 
-.statusbar{
-  display:flex;align-items:center;justify-content:space-between;padding:0 12px;
-  background:#fff;border-top:1px solid var(--line);font-size:10px;color:var(--muted)
+:root[data-theme="light"] {
+  color-scheme: light;
 }
-.status-left,.status-right{display:flex;gap:16px;align-items:center}
 
-.mobile-panel-toggle{display:none}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
 
-@media(max-width:900px){
-  .workspace{grid-template-columns:58px 1fr}
-  .inspector{
-    position:absolute;right:0;top:58px;bottom:34px;width:min(340px,88vw);
-    z-index:20;box-shadow:-10px 0 30px rgba(0,0,0,.12);
-    transform:translateX(100%);transition:.2s
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--font-size-base);
+  line-height: calc(var(--font-size-base) * 1.625);
+  font-weight: var(--font-weight-normal);
+}
+
+:root:not([data-app-block-surface], [data-visualize-standalone]) > body {
+  padding: 12px;
+}
+
+.cursor-interaction {
+  cursor: var(--cursor-interaction, pointer);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: var(--cursor-interaction, pointer);
+  text-decoration: none;
+  text-underline-offset: 2px;
+  font-weight: inherit;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+.table {
+  font-family: var(--font-sans);
+}
+
+h1 {
+  font-size: calc(var(--font-size-base) * 1.5);
+  line-height: 1.3333333333;
+}
+
+h2 {
+  font-size: calc(var(--font-size-base) * 1.25);
+  line-height: 1.4;
+}
+h3 {
+  font-size: calc(var(--font-size-base) * 1.125);
+  line-height: 1.5555555556;
+}
+h4 {
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+h5,
+h6 {
+  font-size: var(--font-size-base);
+  line-height: calc(var(--font-size-base) * 1.625);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong,
+th {
+  font-weight: 600;
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+pre,
+pre code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: calc(var(--font-size-base) * 0.875);
+  line-height: calc(var(--font-size-base) * 1.625);
+  font-family: var(--font-sans);
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+.table :is(th, td):not(:last-child) {
+  padding-inline-end: calc(var(--font-size-base) * 1.5);
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead :is(th, td) {
+  border-bottom-color: var(--border-strong, var(--input));
+  padding-block: calc(var(--font-size-base) / 2);
+  line-height: var(--font-size-base);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+.table tbody :is(th, td) {
+  padding-block: calc(var(--font-size-base) * 0.625);
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 8px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+.widget {
+  min-width: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  box-shadow: 0 0 0 0.5px var(--border-strong, var(--border));
+  color: var(--foreground);
+  background: var(--background);
+}
+
+#widget > :not(.card, .widget, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  border: 1px solid var(--border);
+  corner-shape: var(--corner-shape);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-sans);
+  padding: 5px 12px;
+  border-color: color-mix(
+    in oklab,
+    light-dark(var(--primary-foreground), var(--foreground)) 5%,
+    transparent
+  );
+  border-radius: var(--radius-2xl);
+  color: light-dark(var(--primary-foreground), var(--foreground));
+  background: light-dark(var(--foreground), var(--popover));
+  box-shadow: 0 8px 18px rgb(15 23 42 / 20%);
+  letter-spacing: -0.15px;
+  font-size: calc(var(--font-size-base) * 14 / 16);
+  font-size: round(nearest, calc(var(--font-size-base) * 14 / 16), 1px);
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* The shared runtime owns data-tooltip; suppress AppBlock's pseudo-tooltip. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: color-mix(in srgb, var(--foreground) 40%, var(--muted-foreground));
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  font-family: var(--font-sans);
+  font-size: calc(var(--font-size-base) * 14 / 16);
+  font-size: round(nearest, calc(var(--font-size-base) * 14 / 16), 1px);
+  font-weight: var(--font-weight-normal);
+  line-height: 1;
+}
+
+small,
+.text-small {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+/* Match inline alignment without overriding a containing flex or grid layout. */
+.btn,
+.nav-link,
+.form-control,
+.form-select,
+.form-range,
+.form-check {
+  vertical-align: middle;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  corner-shape: var(--corner-shape);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: inherit;
+  font-family: var(--font-sans);
+  height: fit-content;
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  padding-inline: var(--control-spacing, 12px);
+  border-color: transparent;
+  border-radius: var(--radius-full);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  font-size: calc(var(--font-size-base) * 14 / 16);
+  font-size: round(nearest, calc(var(--font-size-base) * 14 / 16), 1px);
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+}
+
+.btn {
+  border-color: var(--border);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: var(--cursor-interaction, pointer);
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: light-dark(
+    color-mix(in srgb, var(--foreground) 5.5%, transparent),
+    color-mix(in srgb, var(--foreground) 8%, transparent)
+  );
+}
+
+.nav-link:not(:disabled):not([aria-disabled="true"]):hover {
+  background: color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.btn-primary {
+  border-color: var(--border);
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: border-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: border-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--muted-foreground);
+  background: light-dark(
+    color-mix(in srgb, var(--foreground) 5.5%, transparent),
+    color-mix(in srgb, var(--foreground) 8%, transparent)
+  );
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+/* Shared preview chrome; product styles stay inside each variant. */
+.viz-dotted-background {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--foreground) 14%, transparent) 0.8px,
+    transparent 0.8px
+  );
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.viz-carousel {
+  position: relative;
+  min-width: 0;
+}
+
+.viz-carousel:has(> .viz-carousel-controls) {
+  min-height: calc(60px + var(--viz-carousel-picker-height, 0px));
+  padding-bottom: 60px;
+}
+
+.viz-carousel > [data-variant][hidden] {
+  display: none !important;
+}
+
+.viz-carousel > [data-variant] {
+  isolation: isolate;
+}
+
+.viz-carousel-controls {
+  --viz-carousel-hover: light-dark(
+    color-mix(in srgb, var(--foreground) 5.4%, transparent),
+    color-mix(in srgb, var(--foreground) 7.8%, transparent)
+  );
+  position: absolute;
+  z-index: 2;
+  bottom: 8px;
+  left: 50%;
+  display: flex;
+  width: max-content;
+  /* Leave room for the host's design-controls launcher at the trailing edge. */
+  max-width: calc(100% - 96px);
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  /* Match the settings dropdown chrome independently of the content font size. */
+  font-size: 13px;
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+/* Keep authored mockup button styles out of the shared carousel chrome. */
+.viz-carousel-controls button,
+.viz-carousel-picker > summary {
+  display: flex !important;
+  height: auto !important;
+  min-height: 30px;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px;
+  padding: 0 6px !important;
+  -webkit-app-region: no-drag;
+  border: 0 !important;
+  border-radius: 14px !important;
+  color: inherit !important;
+  background: transparent !important;
+  font: inherit !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.viz-carousel-controls > button,
+.viz-carousel-picker > summary {
+  position: relative;
+  isolation: isolate;
+}
+
+.viz-carousel-controls > button {
+  --icon-size: 16px;
+  width: 30px !important;
+  padding: 0 !important;
+}
+
+.viz-carousel-picker > summary {
+  padding-inline: 12px !important;
+}
+
+.viz-carousel-controls .viz-carousel-caret {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin: 0;
+  color: inherit;
+  transform: rotate(180deg);
+}
+
+.viz-carousel-controls > button > svg,
+.viz-carousel-controls .viz-carousel-caret,
+.viz-carousel-count {
+  opacity: 0.5;
+}
+
+.viz-carousel-controls > button::before,
+.viz-carousel-picker > summary::before {
+  position: absolute;
+  z-index: -1;
+  inset: 3px;
+  border-radius: 12px;
+  content: "";
+  pointer-events: none;
+}
+
+.viz-carousel-controls > button:hover::before,
+.viz-carousel-picker > summary:hover::before {
+  background: var(--viz-carousel-hover);
+}
+
+.viz-carousel-controls > button,
+.viz-carousel-controls [data-lucide],
+.viz-carousel-controls .lucide {
+  flex-shrink: 0;
+}
+
+.viz-carousel-picker {
+  min-width: 0;
+}
+
+.viz-carousel-picker > summary {
+  min-width: 0;
+  list-style: none;
+}
+
+.viz-carousel-picker > summary::-webkit-details-marker {
+  display: none;
+}
+
+.viz-carousel-count {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.viz-carousel-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viz-carousel-options {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  max-height: 240px;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  box-shadow: 0 4px 12px light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 25%));
+}
+
+.viz-carousel-options > button {
+  border-radius: max(0px, calc(var(--radius-lg) - 5px)) !important;
+  width: 100% !important;
+  min-height: 28px;
+  justify-content: flex-start !important;
+  padding: 4px 8px !important;
+  font-size: var(--font-size-small) !important;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.viz-carousel-options > [aria-current="true"],
+.viz-carousel-options > button:hover {
+  background: var(--viz-carousel-hover) !important;
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  height: calc(12px + 2 * var(--control-spacing, 12px));
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  padding-inline: calc(4px + var(--control-spacing, 12px) / 2);
+  border-color: var(--input);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--popover) 96%, transparent);
+  font-size: calc(var(--font-size-base) * 14 / 16);
+  font-size: round(nearest, calc(var(--font-size-base) * 14 / 16), 1px);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.4285714286;
+}
+.form-control:is(
+  [type="file"],
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="week"],
+  [type="color"]
+) {
+  height: calc(12px + 2 * var(--control-spacing, 12px));
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  line-height: 18px;
+}
+.form-control:is(
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="week"]
+) {
+  padding-inline: var(--control-spacing, 12px);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+  padding: 0;
+}
+
+.form-control[type="file"]::file-selector-button {
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+  min-height: calc(10px + 2 * var(--control-spacing, 12px));
+  padding-inline: var(--control-spacing, 12px);
+  margin-inline-end: var(--control-spacing, 12px);
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: calc(12px + 2 * var(--control-spacing, 12px));
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  resize: vertical;
+  min-height: 96px;
+  padding: 8px 10px;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: none;
+}
+.form-control:disabled {
+  color: var(--muted-foreground);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  opacity: 1;
+}
+.form-control[aria-invalid="true"] {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--red) 20%, transparent);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: fit-content;
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  margin: 0;
+  /* The secondary icon role is 14px at compact density and 16px at web density. */
+  --icon-size: calc(10px + var(--control-spacing, 12px) / 2);
+  /* Settings dropdowns retain a 12px inset and a 4px text-to-chevron gap. */
+  padding: 0 calc(16px + var(--icon-size)) 0 12px;
+  outline: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent calc(50% - 0.6px),
+      var(--muted-foreground) calc(50% - 0.6px) calc(50% + 0.6px),
+      transparent calc(50% + 0.6px)
+    ),
+    linear-gradient(
+      135deg,
+      transparent calc(50% - 0.6px),
+      var(--muted-foreground) calc(50% - 0.6px) calc(50% + 0.6px),
+      transparent calc(50% + 0.6px)
+    );
+  background-position:
+    calc(100% - 12px - var(--icon-size) / 2) 50%,
+    calc(100% - 12px - var(--icon-size) * 0.18) 50%;
+  background-repeat: no-repeat;
+  background-size: calc(var(--icon-size) * 0.32) calc(var(--icon-size) * 0.32);
+  cursor: var(--cursor-interaction, default);
+  font-size: calc(var(--font-size-base) * 14 / 16);
+  font-size: round(nearest, calc(var(--font-size-base) * 14 / 16), 1px);
+  font-weight: var(--font-weight-normal);
+  line-height: 18px;
+}
+
+.form-select :is(option, optgroup) {
+  color: var(--popover-foreground);
+  background-color: var(--popover);
+}
+
+.form-select :is(option, optgroup):disabled {
+  color: var(--muted-foreground);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: light-dark(
+    color-mix(in srgb, var(--foreground) 5.5%, transparent),
+    color-mix(in srgb, var(--foreground) 8%, transparent)
+  );
+}
+
+.form-select:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+.form-select:disabled {
+  opacity: 0.4;
+}
+
+.form-check {
+  display: flex;
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  corner-shape: round;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  width: calc(10px + var(--control-spacing, 12px) / 2);
+  height: calc(10px + var(--control-spacing, 12px) / 2);
+  border-color: var(--border-strong, var(--input));
+  border-radius: calc(var(--radius-sm) / 2);
+  background-color: transparent;
+  color: var(--foreground);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:is(:checked, :indeterminate) {
+  border-color: var(--border-strong, var(--input));
+  background-color: color-mix(in srgb, var(--popover) 96%, transparent);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+  background-color: var(--foreground);
+}
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:indeterminate::before {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 65%;
+  height: 6.65%;
+  margin: auto;
+  border-radius: var(--radius-full);
+  background: var(--foreground);
+  mask: none;
+  content: "";
+}
+
+.form-check-input[type="radio"] {
+  border-radius: var(--radius-full);
+  width: 16px;
+  height: 16px;
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--input);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 0;
+  background: radial-gradient(
+    circle,
+    var(--primary-foreground) 0 3px,
+    var(--foreground) 3px
+  );
+  box-shadow: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:focus-visible {
+  border-color: var(--ring);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+.form-check:not(.form-switch) .form-check-input[type="radio"]:disabled,
+.form-check:not(.form-switch)
+  .form-check-input[type="radio"]:disabled
+  + .form-check-label {
+  opacity: 0.5;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+  border-color: #fff;
+  background: #fff;
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--blue);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+  outline: none;
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  accent-color: var(--primary);
+  height: calc(12px + 2 * var(--control-spacing, 12px));
+  min-height: calc(12px + 2 * var(--control-spacing, 12px));
+  outline: none;
+  border-radius: var(--radius-full);
+  color: var(--foreground);
+  background: transparent;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  background: var(--form-range-track, var(--border));
+  height: 2px;
+  border-radius: var(--radius-full);
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  margin-top: -9px;
+  border-color: transparent;
+  background: currentColor;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Outline the native track and thumb, preserving the larger input hit area. */
+.form-range:focus-visible::-webkit-slider-runnable-track {
+  outline: 2px auto Highlight;
+  outline-color: -webkit-focus-ring-color;
+}
+
+.form-range::-moz-range-track {
+  background: var(--form-range-track, var(--border));
+  height: 2px;
+  border-radius: var(--radius-full);
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  border-color: transparent;
+  background: currentColor;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+
+.form-range:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed="true"],
+  [aria-selected="true"],
+  .is-selected
+) {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--blue);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.viz-carousel-controls :is(button, summary):focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 2px !important;
+}
+
+/* Web recipes are the default, including on renderers without inline style queries. */
+@supports (border-radius: if(style(--corner-shape: round): 1px; else: 2px)) {
+  /* Match the host's proportional text-sm scale at every text preference. */
+  .tooltip,
+  .viz-badge,
+  .btn,
+  .nav-link,
+  .form-control,
+  .form-select {
+    font-size: if(
+      style(--corner-shape: round): round(
+          nearest,
+          calc(var(--font-size-base) * 14 / 16),
+          1px
+        );
+        else: round(nearest, calc(var(--font-size-base) * 13 / 14), 1px)
+    );
   }
-  .inspector.open{transform:translateX(0)}
-  .mobile-panel-toggle{display:block!important}
-  .toolbar{padding:8px 4px}.tool{width:48px}
-  .file-name{display:none}
-  .ai-card{left:10px;bottom:10px;width:calc(100% - 20px)}
+
+  .btn,
+  .nav-link,
+  .form-select {
+    border-radius: if(
+      style(--corner-shape: round): var(--radius-full); else: var(--radius-lg)
+    );
+  }
+
+  .form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+    border-radius: if(
+      style(--corner-shape: round): calc(var(--radius-sm) / 2);
+        else: calc(var(--radius-lg) * 0.4)
+    );
+  }
+
+  .tooltip {
+    font-weight: if(
+      style(--corner-shape: round): 600; else: var(--font-weight-normal)
+    );
+  }
 }
-</style>
-</head>
+
+@media (pointer: coarse) {
+  .viz-carousel:has(> .viz-carousel-controls) {
+    min-height: calc(76px + var(--viz-carousel-picker-height, 0px));
+    padding-bottom: 76px;
+  }
+
+  .btn,
+  .nav-link,
+  .viz-carousel-controls button,
+  .viz-carousel-picker > summary,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, calc(var(--font-size-base) * 14 / 16));
+    font-size: max(
+      16px,
+      round(nearest, calc(var(--font-size-base) * 14 / 16), 1px)
+    );
+  }
+  .form-control:is(
+    [type="file"],
+    [type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="week"],
+    [type="time"],
+    [type="color"]
+  ) {
+    height: 44px;
+    min-height: 44px;
+    font-size: max(16px, calc(var(--font-size-base) * 14 / 16));
+    font-size: max(
+      16px,
+      round(nearest, calc(var(--font-size-base) * 14 / 16), 1px)
+    );
+  }
+
+  .form-control[type="file"]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type="color"] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="time"],
+    [type="week"]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+
+html>body{padding:0}</style>
+<style>html,body{margin:0;padding:0!important}#bkd-taller{min-height:100vh;border-radius:0}#bkd-taller header{padding-right:24px}#bkd-taller .layout{min-height:calc(100vh - 150px)}</style></head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">K2</div>
-      <div class="brandtxt"><b>Visualize</b><span>JEWELRY DESIGNER</span></div>
-      <div class="file-name">Untitled pendant · autosaved</div>
-    </div>
-    <div class="top-actions">
-      <button id="undo">↶</button>
-      <button id="redo">↷</button>
-      <button id="panelToggle" class="mobile-panel-toggle">Properties</button>
-      <button id="save">Save</button>
-      <button class="primary" id="exportBtn">Export</button>
-    </div>
-  </header>
+<script type="application/json" id="codex-visualization-widget-state">__CODEX_VISUALIZATION_WIDGET_STATE__</script>
+<script>(() => {
+  const root = document.documentElement;
+  const mediaQuery = globalThis.matchMedia("(prefers-color-scheme: dark)");
+  const apply = Reflect.apply;
+  const isArray = Array.isArray;
+  const hasOwn = Object.hasOwn;
+  const parentWindow = globalThis.parent;
+  const stringify = JSON.stringify;
+  const parse = JSON.parse;
+  const encode = TextEncoder.prototype.encode.bind(new TextEncoder());
+  const initialStateElement = document.getElementById(
+    "codex-visualization-widget-state",
+  );
+  const initialGlobals = parse(initialStateElement?.textContent ?? "{}");
+  initialStateElement?.remove();
+  /** @type {Record<string, unknown> | null} */
+  let state = initialGlobals.widgetState ?? null;
+  const statePersistence = initialGlobals.statePersistence ?? "none";
+  let nextStateRequestId = 0;
+  /** @type {Map<number, { resolve: () => void; reject: (error: Error) => void; timeout: ReturnType<typeof globalThis.setTimeout>; serializedState: string }>} */
+  const pendingStateWrites = new Map();
+  const persistenceError = () =>
+    Object.assign(
+      new Error("The host could not persist the widget state update"),
+      {
+        code: -32000,
+        data: { code: "widget_state_persistence_failed", retryable: false },
+      },
+    );
+  /**
+   * @param {object} prototype
+   * @param {string} property
+   */
+  const getPrototypeGetter = (prototype, property) => {
+    // oxlint-disable-next-line typescript/unbound-method -- invoked through captured Reflect.apply
+    const getter = Object.getOwnPropertyDescriptor(prototype, property)?.get;
+    if (getter == null) {
+      throw new Error(`Missing ${property} getter`);
+    }
+    return getter;
+  };
+  const getMessageData = getPrototypeGetter(MessageEvent.prototype, "data");
+  const getMessagePorts = getPrototypeGetter(MessageEvent.prototype, "ports");
+  const getMessageSource = getPrototypeGetter(MessageEvent.prototype, "source");
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const addHostMessageListener = MessagePort.prototype.addEventListener;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const postHostMessage = MessagePort.prototype.postMessage;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const startHostPort = MessagePort.prototype.start;
+  // oxlint-disable-next-line typescript/unbound-method -- captured before the untrusted fragment runs
+  const stopMessagePropagation = Event.prototype.stopImmediatePropagation;
+  /** @type {MessagePort | null} */
+  let hostPort = null;
+  const postToHost = (type, payload) => {
+    if (hostPort != null) {
+      apply(postHostMessage, hostPort, [{ type, ...payload }]);
+    }
+  };
+  const openExternal = ({ href }) => {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost("open-external", { href });
+    }
+  };
+  const sendFollowUpMessage = ({ context, prompt, title }) => {
+    if (globalThis.navigator.userActivation?.isActive === true) {
+      postToHost("follow-up", { context, prompt, title });
+    }
+    return Promise.resolve();
+  };
+  /**
+   * @param {Record<string, unknown> | ((previous: Record<string, unknown> | null) => Record<string, unknown>)} next
+   * @returns {Promise<void>}
+   */
+  const setWidgetState = async (next) => {
+    const nextState = typeof next === "function" ? next(state) : next;
+    if (
+      nextState == null ||
+      typeof nextState !== "object" ||
+      isArray(nextState)
+    ) {
+      throw new TypeError("Widget state must be a JSON object");
+    }
+    const inputState = stringify(
+      nextState,
+      (_key, /** @type {unknown} */ value) => {
+        if (
+          typeof value === "undefined" ||
+          typeof value === "function" ||
+          typeof value === "symbol" ||
+          (typeof value === "number" && !Number.isFinite(value))
+        ) {
+          throw new TypeError("Widget state must be a JSON object");
+        }
+        return value;
+      },
+    );
+    const parsedState = parse(inputState);
+    if (
+      parsedState == null ||
+      typeof parsedState !== "object" ||
+      isArray(parsedState)
+    ) {
+      throw new TypeError("Widget state must be a JSON object");
+    }
+    const storedState = {
+      modelContent: null,
+      privateContent: null,
+      ...parsedState,
+    };
+    const serializedState = stringify(storedState);
+    if (encode(serializedState).length > 16 * 1024) {
+      throw new TypeError(
+        "Widget state must be a JSON object of at most 16 KiB",
+      );
+    }
+    if (
+      hasOwn(storedState, "imageIds") &&
+      (!isArray(storedState.imageIds) ||
+        storedState.imageIds.some(
+          (/** @type {unknown} */ id) => typeof id !== "string",
+        ))
+    ) {
+      throw new TypeError("Widget state imageIds must be an array of strings");
+    }
+    if (storedState.imageIds?.length > 0) {
+      throw Object.assign(
+        new TypeError("Visualization state does not support image attachments"),
+        { code: -32602, data: { code: "images_unsupported" } },
+      );
+    }
+    state = storedState;
+    globalThis.openai.widgetState = state;
+    globalThis.dispatchEvent(
+      new CustomEvent("openai:set_globals", {
+        detail: { globals: { widgetState: state } },
+      }),
+    );
+    if (statePersistence === "none") {
+      throw persistenceError();
+    }
+    const id = ++nextStateRequestId;
+    return new Promise((resolve, reject) => {
+      const timeout = globalThis.setTimeout(() => {
+        pendingStateWrites.delete(id);
+        reject(persistenceError());
+      }, 30_000);
+      pendingStateWrites.set(id, { resolve, reject, timeout, serializedState });
+      postToHost("widget-state-write", { id, state: serializedState });
+    });
+  };
+  const syncTheme = () => {
+    const theme = mediaQuery.matches ? "dark" : "light";
+    root.dataset.theme = theme;
+    globalThis.openai = {
+      ...globalThis.openai,
+      openExternal,
+      sendFollowUpMessage,
+      setWidgetState,
+      theme,
+      visualizationStyleVariables: {},
+      visualizationTheme: theme,
+      widgetState: state,
+      statePersistence,
+      stateModelContext: "none",
+    };
+    globalThis.dispatchEvent(
+      new CustomEvent("openai:set_globals", {
+        detail: { globals: globalThis.openai },
+      }),
+    );
+  };
+  const sendHeight = () => {
+    postToHost("height", {
+      height: Math.ceil(
+        Math.max(
+          document.body.scrollHeight,
+          document.body.getBoundingClientRect().height,
+        ),
+      ),
+    });
+  };
 
-  <main class="workspace">
-    <aside class="toolbar">
-      <button class="tool active" data-tool="design"><span class="ico">◇</span><span>Design</span></button>
-      <button class="tool" data-tool="templates"><span class="ico">▦</span><span>Templates</span></button>
-      <button class="tool" data-tool="stones"><span class="ico">◆</span><span>Stones</span></button>
-      <button class="tool" data-tool="settings"><span class="ico">⌁</span><span>Settings</span></button>
-      <button class="tool" data-tool="text"><span class="ico">T</span><span>Text</span></button>
-      <button class="tool" data-tool="components"><span class="ico">⊕</span><span>Parts</span></button>
-      <button class="tool" data-tool="material"><span class="ico">◐</span><span>Material</span></button>
-    </aside>
+  globalThis.addEventListener(
+    "message",
+    (event) => {
+      const data = apply(getMessageData, event, []);
+      const ports = apply(getMessagePorts, event, []);
+      const source = apply(getMessageSource, event, []);
+      if (
+        hostPort != null ||
+        source !== parentWindow ||
+        typeof data !== "object" ||
+        data?.type !== "codex-visualization-initialize" ||
+        !isArray(ports) ||
+        ports.length !== 1
+      ) {
+        return;
+      }
+      apply(stopMessagePropagation, event, []);
+      const nextHostPort = ports[0];
+      try {
+        apply(addHostMessageListener, nextHostPort, [
+          "message",
+          (event) => {
+            const data = apply(getMessageData, event, []);
+            if (typeof data === "object" && data?.type === "measure") {
+              sendHeight();
+            } else if (
+              typeof data === "object" &&
+              data?.type === "widget-state-result"
+            ) {
+              /** @type {unknown} */
+              const id = data.id;
+              if (typeof id !== "number") {
+                return;
+              }
+              const pending = pendingStateWrites.get(id);
+              if (pending != null) {
+                pendingStateWrites.delete(id);
+                globalThis.clearTimeout(pending.timeout);
+                if (data.ok === true) {
+                  pending.resolve();
+                } else {
+                  pending.reject(persistenceError());
+                }
+              }
+            }
+          },
+        ]);
+        apply(startHostPort, nextHostPort, []);
+      } catch {
+        return;
+      }
+      hostPort = nextHostPort;
+      for (const [id, { serializedState }] of pendingStateWrites) {
+        postToHost("widget-state-write", { id, state: serializedState });
+      }
+      sendHeight();
+    },
+    { capture: true },
+  );
+  document.currentScript?.remove();
+  mediaQuery.addEventListener("change", syncTheme);
+  globalThis.addEventListener("click", (event) => {
+    if (event.defaultPrevented) {
+      return;
+    }
+    let element = null;
+    if (event.target instanceof globalThis.Element) {
+      element = event.target;
+    } else if (event.target instanceof globalThis.Node) {
+      element = event.target.parentElement;
+    }
+    const link = element?.closest("a[href]");
+    const href = link?.getAttribute("href");
+    if (href == null) {
+      return;
+    }
+    if (href.startsWith("#")) {
+      let id;
+      try {
+        id = decodeURIComponent(href.slice(1));
+      } catch {
+        return;
+      }
+      const target = id.length === 0 ? root : document.getElementById(id);
+      if (
+        target == null ||
+        globalThis.navigator.userActivation?.isActive !== true
+      ) {
+        return;
+      }
+      event.preventDefault();
+      postToHost("scroll-to", {
+        top: target.getBoundingClientRect().top + globalThis.scrollY,
+      });
+      return;
+    }
+    event.preventDefault();
+    openExternal({ href });
+  });
+  new ResizeObserver(sendHeight).observe(document.body);
+  syncTheme();
+})();
 
-    <section class="viewport-wrap">
-      <canvas id="canvas"></canvas>
-      <div class="view-top">
-        <div class="chip" id="viewChip">Pendant · Front view</div>
-        <div class="chip" id="measureChip">28.0 × 32.0 × 3.0 mm</div>
-      </div>
-      <div class="view-controls">
-        <button id="frontBtn">F</button>
-        <button id="isoBtn">◈</button>
-        <button id="fitBtn">⌖</button>
-      </div>
-
-      <div class="ai-card">
-        <div class="ai-row">
-          <input id="aiPrompt" placeholder="Ej.: hazlo más orgánico, alarga la lágrima y añade un zafiro...">
-          <button id="aiApply">Aplicar</button>
-        </div>
-      </div>
-    </section>
-
-    <aside class="inspector" id="inspector">
-      <div class="inspector-head">
-        <div class="kicker">PARAMETRIC DESIGN</div>
-        <h2 id="panelTitle">Pendant</h2>
-      </div>
-
-      <div class="section" data-section="templates">
-        <div class="section-title"><b>Template</b><span>6 bases</span></div>
-        <div class="templates">
-          <button class="template active" data-shape="oval">◯</button>
-          <button class="template" data-shape="drop">♢</button>
-          <button class="template" data-shape="rect">▭</button>
-          <button class="template" data-shape="bar">▯</button>
-          <button class="template" data-shape="triangle">△</button>
-          <button class="template" data-shape="organic">◌</button>
-        </div>
-      </div>
-
-      <div class="section" data-section="design">
-        <div class="section-title"><b>Dimensions</b><span>mm</span></div>
-        <div class="field"><div class="field-line"><span>Width</span><span class="value" id="widthVal">28.0</span></div><input id="width" type="range" min="14" max="55" step=".5" value="28"></div>
-        <div class="field"><div class="field-line"><span>Height</span><span class="value" id="heightVal">32.0</span></div><input id="height" type="range" min="16" max="65" step=".5" value="32"></div>
-        <div class="field"><div class="field-line"><span>Thickness</span><span class="value" id="thicknessVal">3.0</span></div><input id="thickness" type="range" min="1.2" max="7" step=".1" value="3"></div>
-        <div class="field"><div class="field-line"><span>Edge radius</span><span class="value" id="edgeVal">1.0</span></div><input id="edge" type="range" min="0" max="4" step=".1" value="1"></div>
-        <div class="field"><div class="field-line"><span>Organic variation</span><span class="value" id="organicVal">8%</span></div><input id="organic" type="range" min="0" max="100" value="8"></div>
-      </div>
-
-      <div class="section" data-section="components">
-        <div class="section-title"><b>Components</b><span>Bail</span></div>
-        <div class="row2">
-          <select id="bailType"><option value="round">Round bail</option><option value="hidden">Hidden bail</option><option value="wide">Wide bail</option></select>
-          <select id="chainType"><option value="none">No chain</option><option value="fine" selected>Fine chain</option><option value="cable">Cable chain</option></select>
-        </div>
-      </div>
-
-      <div class="section" data-section="material">
-        <div class="section-title"><b>Metal</b><span id="metalLabel">Silver 925</span></div>
-        <div class="swatches">
-          <button class="swatch active" data-metal="silver" title="Silver" style="background:#cfd3d6"></button>
-          <button class="swatch" data-metal="gold" title="Yellow Gold" style="background:#d7a83e"></button>
-          <button class="swatch" data-metal="rose" title="Rose Gold" style="background:#ca8872"></button>
-          <button class="swatch" data-metal="dark" title="Oxidized" style="background:#383735"></button>
-        </div>
-        <div class="field"><div class="field-line"><span>Surface roughness</span><span class="value" id="roughVal">16%</span></div><input id="rough" type="range" min="0" max="100" value="16"></div>
-      </div>
-
-      <div class="section" data-section="stones">
-        <div class="section-title"><b>Stone setting</b><span id="stoneCount">0 stones</span></div>
-        <div class="stone-list">
-          <button class="stone active" data-stone="none"><i style="background:#ddd"></i>None</button>
-          <button class="stone" data-stone="diamond"><i style="background:#eefcff"></i>Diamond</button>
-          <button class="stone" data-stone="sapphire"><i style="background:#2755b3"></i>Sapphire</button>
-          <button class="stone" data-stone="ruby"><i style="background:#b8253d"></i>Ruby</button>
-          <button class="stone" data-stone="emerald"><i style="background:#19815d"></i>Emerald</button>
-          <button class="stone" data-stone="amethyst"><i style="background:#7851a8"></i>Amethyst</button>
-        </div>
-        <div class="field"><div class="field-line"><span>Stone diameter</span><span class="value" id="stoneSizeVal">3.0 mm</span></div><input id="stoneSize" type="range" min="1.5" max="8" step=".1" value="3"></div>
-        <div class="row2">
-          <div class="field"><label style="font-size:9px;color:#777">X position</label><input id="stoneX" class="num" type="range" min="-35" max="35" value="18"></div>
-          <div class="field"><label style="font-size:9px;color:#777">Y position</label><input id="stoneY" class="num" type="range" min="-35" max="35" value="5"></div>
-        </div>
-        <button class="add-btn" id="addStone">+ Add another stone</button>
-      </div>
-
-      <div class="section" data-section="text">
-        <div class="section-title"><b>Text / engraving</b><span>front</span></div>
-        <input id="engraving" type="text" maxlength="18" placeholder="K2 / name / date">
-        <div class="field"><div class="field-line"><span>Emboss depth</span><span class="value" id="engraveDepthVal">0.3 mm</span></div><input id="engraveDepth" type="range" min=".1" max="1.2" step=".1" value=".3"></div>
-      </div>
-
-      <div class="section" data-section="settings">
-        <div class="section-title"><b>Production</b><span>live</span></div>
-        <div class="stats">
-          <div class="stat"><span>Estimated weight</span><b id="weight">8.4 g</b></div>
-          <div class="stat"><span>Volume</span><b id="volume">0.8 cm³</b></div>
-          <div class="stat"><span>Min. wall</span><b id="wall">3.0 mm</b></div>
-          <div class="stat"><span>Stone count</span><b id="stoneStat">0</b></div>
-        </div>
-        <div class="valid" id="validState">Production-ready geometry</div>
-      </div>
-    </aside>
-  </main>
-
-  <footer class="statusbar">
-    <div class="status-left"><span>Perspective</span><span>Grid 1 mm</span><span id="autosave">Autosaved</span></div>
-    <div class="status-right"><span id="statusDims">28 × 32 × 3 mm</span><span id="statusWeight">8.4 g</span></div>
-  </footer>
+</script>
+<div id="bkd-taller">
+<style>
+#bkd-taller{font:16px/1.45 system-ui,sans-serif;color:light-dark(#17232f,#edf3f8);background:light-dark(#eef2f5,#151e26);border-radius:16px;overflow:hidden;color-scheme:light dark}#bkd-taller *{box-sizing:border-box}#bkd-taller header{background:light-dark(#fff,#202c36);padding:20px 110px 20px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-bottom:1px solid light-dark(#d9e1e7,#3b4852)}#bkd-taller .brand{font-weight:750;letter-spacing:-1px;font-size:24px}#bkd-taller .brand span{color:light-dark(#007cad,#55cbff)}#bkd-taller small{font-size:13px;color:light-dark(#546574,#b4c2cd)}#bkd-taller .layout{display:grid;grid-template-columns:280px 1fr;min-height:550px}#bkd-taller aside{padding:22px 16px;border-right:1px solid light-dark(#d9e1e7,#3b4852)}#bkd-taller button{font:inherit;cursor:pointer;min-height:48px;border:1px solid light-dark(#cbd6df,#53626e);border-radius:10px;background:light-dark(#fff,#263540);color:inherit;padding:12px 16px}#bkd-taller .machine{display:block;text-align:left;width:100%;margin:12px 0;padding:18px}#bkd-taller .machine[aria-pressed=true]{border:2px solid #00a8f3;background:light-dark(#e5f6ff,#123b50)}#bkd-taller .machine strong,#bkd-taller .machine small{display:block}#bkd-taller .status{display:inline-block;margin-top:10px;font-size:14px}#bkd-taller main{padding:28px;min-width:0}#bkd-taller h2{font-size:28px;line-height:1.2;margin:12px 0 18px}#bkd-taller h3{margin:0 0 12px;font-size:17px}#bkd-taller .step{background:light-dark(#fff,#202c36);padding:26px;border-radius:14px;margin:18px 0}#bkd-taller .destination{font-size:34px;font-weight:700;margin:16px 0}#bkd-taller .primary{background:#007eaf;color:#fff;border-color:#007eaf;font-weight:650}#bkd-taller .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}#bkd-taller .stop{color:light-dark(#b32b32,#ffb1b4)}#bkd-taller .notice{padding:14px 18px;background:light-dark(#fff0cc,#47391e);border-radius:10px;margin-bottom:18px}#bkd-taller .time{display:flex;gap:24px;flex-wrap:wrap;border-top:1px solid light-dark(#d9e1e7,#3b4852);padding-top:16px;margin-top:22px}#bkd-taller .time strong{display:block;font-variant-numeric:tabular-nums}#bkd-taller input,#bkd-taller select,#bkd-taller textarea{font:inherit;padding:12px;border:1px solid light-dark(#b2c1cc,#667682);border-radius:8px;background:light-dark(#fff,#18232d);color:inherit;max-width:100%}#bkd-taller label{display:block;margin:14px 0 6px}#bkd-taller .log{padding:16px 24px;background:light-dark(#fff,#202c36);border-top:1px solid light-dark(#d9e1e7,#3b4852)}#bkd-taller .report{white-space:pre-wrap}#bkd-taller .error{color:light-dark(#a61e28,#ffb1b4)}@media(max-width:650px){#bkd-taller .layout{grid-template-columns:1fr}#bkd-taller aside{border-right:0;border-bottom:1px solid #8997a555}#bkd-taller .machines{display:grid;grid-template-columns:1fr 1fr;gap:10px}#bkd-taller .machine{margin:0;padding:12px}#bkd-taller main{padding:18px}#bkd-taller .destination{font-size:28px}#bkd-taller header{padding-left:18px}}
+</style>
+<header><div class="brand">Berri<span>Kide</span></div><div>Taller · Puesto del operario<br><small>Demo interactiva · lecturas QR simuladas</small></div></header>
+<div class="layout"><aside><h3>Mis procesos</h3><div class="machines" id="bkd-machines"></div><small>Una intervención a la vez.<br>Los ciclos automáticos continúan.</small><div class="actions"><button id="bkd-cycle">Simular fin de ciclo de prensa</button></div></aside><main id="bkd-content"></main></div>
+<div class="log" aria-live="polite" id="bkd-log">Turno de demostración · Roscado de 350 piezas asignado.</div>
+<script>
+(()=>{const root=document.getElementById('bkd-taller');const $=s=>root.querySelector(s);const tasks=[{name:'Prensa P-02',of:'OF-2048 · Corte de chapa',step:2,auto:true,attention:false,blocked:false,done:false,op:240,mach:720},{name:'Roscadora R-01',of:'OF-2051 · Roscado M6',step:0,auto:false,attention:false,blocked:false,done:false,op:0,mach:0}];let selected=1,mode='',report=[],message='',scanError='',paused=false;const stages=[['Recoge la caja de 350 piezas','Ubicación 58','58','Verifica el QR de la balda o de la caja asignada.'],['Lleva la caja a la roscadora','Roscadora R-01','R-01','Verifica el QR de la máquina antes de trabajar.'],['Rosca las 350 piezas','Roscado M6',null,'Registra la cantidad al finalizar la operación.'],['Devuelve la caja a su ubicación','Ubicación 58','58','Verifica el QR de destino antes de confirmar el depósito.']];function log(s){$('#bkd-log').textContent=s}function fmt(n){return Math.floor(n/60).toString().padStart(2,'0')+':'+(n%60).toString().padStart(2,'0')}function render(){const t=tasks[selected];$('#bkd-machines').innerHTML=tasks.map((x,i)=>`<button class="machine" data-task="${i}" aria-pressed="${i===selected}"><strong>${x.name}</strong><small>${x.of}</small><span class="status">${x.blocked?'⛔ Bloqueado':x.done?'✓ Finalizado':x.attention?'● Requiere atención':x.auto?'● En automático':i===selected&&!paused?'● En atención':'○ Pendiente / en espera'}</span></button>`).join('');let html=`<small>${t.of}</small>`;if(tasks.some(x=>x.attention))html+='<div class="notice">Prensa P-02 · Ciclo terminado. Necesita descarga.</div>';if(mode==='report'){html+='<h2>Reporte de paradas</h2><div class="step report" id="bkd-report-text"></div><button data-action="back">Volver a la tarea</button>';$('#bkd-content').innerHTML=html;$('#bkd-report-text').textContent=report.length?report.map(x=>x).join('\n\n'):'Sin paradas registradas.';return}if(mode==='stop'){html+=`<h2>Bloquear este proceso</h2><div class="step"><label for="bkd-reason">Motivo de la parada</label><select id="bkd-reason"><option>Rotura de troquel</option><option>Corte de suministro eléctrico</option><option>Comportamiento del material</option><option>Falta de material</option><option>Calidad</option><option>Otro</option></select><label for="bkd-note">Observaciones</label><textarea id="bkd-note" rows="2"></textarea><div class="actions"><button class="primary" data-action="block">Registrar y bloquear</button><button data-action="back">Cancelar</button></div></div>`}else if(t.blocked){html+='<h2>Proceso bloqueado</h2><div class="step">Parada registrada. Puedes atender el otro proceso.</div><button data-action="report">Ver reporte</button>'}else if(t.done){html+='<h2>Trabajo completado</h2><div class="step">Producción y movimientos registrados en esta demo.</div><button data-action="report">Ver reporte de paradas</button>'}else if(selected===0){html+=`<h2>${t.auto?'La prensa sigue trabajando':'Retira las piezas de la prensa'}</h2><div class="step"><div class="destination">Prensa P-02</div><p>${t.auto?'Puedes atender la roscadora mientras continúa el ciclo automático.':'Verifica el QR de la máquina para continuar con la descarga.'}</p>${!t.auto?scan('P-02'):''}</div>`}else{const s=stages[t.step];html+=`<small> · Paso ${t.step+1} de 4</small><h2>${s[0]}</h2><div class="step"><div class="destination">${s[1]}</div><p>${s[3]}</p>${s[2]?scan(s[2]):'<label for="bkd-qty">Piezas terminadas (lote de 350)</label><input id="bkd-qty" type="number" value="350" min="0" max="350"><div class="actions"><button class="primary" data-action="quantity">Registrar producción</button></div>'}<div class="error" role="alert">${scanError}</div></div>`}if(mode!=='stop'&&!t.blocked&&!t.done)html+=`<div class="actions"><button data-action="pause">${paused?'Retomar mi intervención':'Pausar mi intervención'}</button><button class="stop" data-action="stop">Parada / incidencia</button><button data-action="report">Reporte</button></div>`;html+=`<div class="time"><div><small>Tiempo de operario</small><strong id="bkd-op">${fmt(t.op)}</strong></div><div><small>Tiempo de máquina</small><strong id="bkd-mach">${fmt(t.mach)}</strong></div><div><small>Ubicación 58 · caja OF-2051</small><strong>${tasks[1].step===0?'350 piezas · pendiente de recogida':tasks[1].done?'350 piezas roscadas · depositadas':'Caja fuera · ubicación reservada'}</strong></div></div>`;$('#bkd-content').innerHTML=html}function scan(code){return `<label for="bkd-code">Código QR esperado: ${code}</label><input id="bkd-code" placeholder="Introduce el código de prueba" autocomplete="off"><div class="actions"><button class="primary" data-action="scan">Verificar código</button><button data-action="simulate">Simular QR correcto</button></div><small>Simulación: no utiliza la cámara.</small>`}root.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.task!==undefined){selected=Number(b.dataset.task);mode='';scanError='';paused=false;render();return}if(b.id==='bkd-cycle'){const t=tasks[0];if(t.auto&&!t.blocked){t.auto=false;t.attention=true;log('Aviso: la prensa ha terminado. La roscadora conserva su paso.');render()}return}const a=b.dataset.action,t=tasks[selected];if(a==='back'){mode='';render()}if(a==='report'){mode='report';render()}if(a==='stop'){mode='stop';render()}if(a==='pause'){paused=!paused;log(paused?'Intervención pausada. Los procesos automáticos continúan.':'Intervención retomada.');render()}if(a==='block'){const reason=$('#bkd-reason').value,note=$('#bkd-note').value;report.push(new Date().toLocaleTimeString('es-ES')+' · '+t.name+' · '+t.of+'\nMotivo: '+reason+(note?'\nObservaciones: '+note:''));t.blocked=true;t.auto=false;t.attention=false;mode='';log('Proceso bloqueado y reporte de parada registrado en la demo.');render()}if(a==='scan'||a==='simulate'){const expected=selected===0?'P-02':stages[t.step][2];if(a==='scan'&&$('#bkd-code').value.trim()!==expected){scanError='Código incorrecto. Debes verificar '+expected+'.';render();return}if(paused){scanError='Retoma tu intervención antes de continuar.';render();return}if(selected===0){t.done=true;t.attention=false;log('Prensa verificada · descarga confirmada en la demo.')}else{t.step++;if(t.step===4)t.done=true;log(t.done?'Ubicación 58 verificada · 350 piezas roscadas depositadas.':'QR '+expected+' verificado · siguiente paso disponible.')}scanError='';render()}if(a==='quantity'){const n=Number($('#bkd-qty').value);if(n!==350){scanError='Esta ruta de demostración requiere las 350 piezas. Para producción parcial, registra una incidencia.';render();return}if(paused){scanError='Retoma tu intervención antes de registrar producción.';render();return}t.step=3;scanError='';log('350 piezas roscadas registradas · falta devolver la caja.');render()}});setInterval(()=>{tasks.forEach((t,i)=>{if(t.blocked||t.done)return;if(t.auto)t.mach++;if(i===selected&&!paused&&!mode&&!t.auto)t.op++;if(i===1&&i===selected&&t.step===2&&!paused&&!mode)t.mach++});const t=tasks[selected];if($('#bkd-op'))$('#bkd-op').textContent=fmt(t.op);if($('#bkd-mach'))$('#bkd-mach').textContent=fmt(t.mach)},1000);render()})();
+</script>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
 <script>
-(function(){
-  if(!window.THREE){alert('No se pudo cargar Three.js');return}
-  const T=window.THREE;
-
-  const metals={
-    silver:{label:'Silver 925',color:0xcbd0d3,density:10.36,rough:.19},
-    gold:{label:'18K Yellow Gold',color:0xd3a23b,density:15.6,rough:.16},
-    rose:{label:'18K Rose Gold',color:0xc98470,density:15.2,rough:.2},
-    dark:{label:'Oxidized Silver',color:0x343331,density:10.36,rough:.34}
-  };
-  const gemColors={diamond:0xffffff,sapphire:0x2552b1,ruby:0xb7223b,emerald:0x13815a,amethyst:0x7550a7};
-
-  const state={
-    shape:'oval',width:28,height:32,thickness:3,edge:1,organic:8,
-    metal:'silver',rough:16,bail:'round',chain:'fine',
-    stone:'none',stoneSize:3,stoneX:18,stoneY:5,stones:[],
-    engraving:'',engraveDepth:.3,seed:3
-  };
-  let history=[],future=[];
-  const clone=()=>JSON.parse(JSON.stringify(state));
-  const remember=()=>{history.push(clone());if(history.length>35)history.shift();future=[]};
-
-  const renderer=new T.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.outputColorSpace=T.SRGBColorSpace;
-  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
-
-  const scene=new T.Scene();
-  scene.background=new T.Color(0xefefeb);
-  const camera=new T.PerspectiveCamera(30,1,.1,100);camera.position.set(0,0,11);
-
-  const root=new T.Group();root.rotation.x=-.08;root.rotation.y=.18;scene.add(root);
-
-  let l=new T.DirectionalLight(0xffffff,5.6);l.position.set(4,5,7);l.castShadow=true;scene.add(l);
-  l=new T.DirectionalLight(0xdce5ff,2.6);l.position.set(-4,2,4);scene.add(l);
-  l=new T.DirectionalLight(0xffe0bd,2.8);l.position.set(1,-4,3);scene.add(l);
-  scene.add(new T.HemisphereLight(0xffffff,0x686058,2.2));
-
-  const grid=new T.GridHelper(12,24,0xd4d4cf,0xe3e3df);grid.rotation.x=Math.PI/2;grid.position.z=-1.6;scene.add(grid);
-
-  let parts=[];
-  function add(o){root.add(o);parts.push(o);return o}
-  function clear(){
-    parts.forEach(o=>{root.remove(o);o.geometry?.dispose?.();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}});
-    parts=[];
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
   }
-  function metalMat(){
-    const m=metals[state.metal];
-    return new T.MeshStandardMaterial({color:m.color,metalness:1,roughness:T.MathUtils.clamp(m.rough+state.rough*.0035,.07,.7)});
-  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
 
-  function shapePath(){
-    const sx=state.width/28,sy=state.height/32,s=new T.Shape();
-    if(state.shape==='oval'){
-      s.absellipse(0,0,.78*sx,.95*sy,0,Math.PI*2,false,0);
-    }else if(state.shape==='drop'){
-      s.moveTo(0,1.08*sy);s.bezierCurveTo(.8*sx,.52*sy,.82*sx,-.5*sy,0,-1.0*sy);s.bezierCurveTo(-.82*sx,-.5*sy,-.8*sx,.52*sy,0,1.08*sy);
-    }else if(state.shape==='rect'){
-      const w=.82*sx,h=.88*sy,r=Math.min(.22,state.edge/4)*Math.min(sx,sy);
-      s.moveTo(-w+r,-h);s.lineTo(w-r,-h);s.quadraticCurveTo(w,-h,w,-h+r);s.lineTo(w,h-r);s.quadraticCurveTo(w,h,w-r,h);s.lineTo(-w+r,h);s.quadraticCurveTo(-w,h,-w,h-r);s.lineTo(-w,-h+r);s.quadraticCurveTo(-w,-h,-w+r,-h)
-    }else if(state.shape==='bar'){
-      const w=.3*sx,h=1.05*sy,r=.15;
-      s.moveTo(-w+r,-h);s.lineTo(w-r,-h);s.quadraticCurveTo(w,-h,w,-h+r);s.lineTo(w,h-r);s.quadraticCurveTo(w,h,w-r,h);s.lineTo(-w+r,h);s.quadraticCurveTo(-w,h,-w,h-r);s.lineTo(-w,-h+r);s.quadraticCurveTo(-w,-h,-w+r,-h)
-    }else if(state.shape==='triangle'){
-      s.moveTo(0,1.0*sy);s.lineTo(.9*sx,-.9*sy);s.lineTo(-.9*sx,-.9*sy);s.closePath()
-    }else{
-      const n=24;
-      for(let i=0;i<n;i++){
-        const a=i/n*Math.PI*2;
-        const rr=1+.11*Math.sin(a*3+state.seed)+.05*Math.sin(a*7+state.seed*.4);
-        const x=Math.cos(a)*.78*sx*rr,y=Math.sin(a)*.92*sy*rr;
-        i?s.lineTo(x,y):s.moveTo(x,y)
-      }s.closePath()
+  const getTrigger = (event) => {
+    for (const target of event.composedPath()) {
+      if (target?.nodeType === Node.ELEMENT_NODE) {
+        const trigger = target.closest("[data-tooltip]");
+        if (trigger) return trigger;
+      }
     }
-    return s
-  }
-
-  function pendant(){
-    const depth=.16+state.thickness*.045;
-    const g=new T.ExtrudeGeometry(shapePath(),{
-      depth,bevelEnabled:true,bevelSegments:4,curveSegments:72,
-      bevelSize:.025+state.edge*.014,bevelThickness:.04
+    return null;
+  };
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
     });
-    g.center();
-    const pos=g.attributes.position,strength=state.organic/100*.045;
-    for(let i=0;i<pos.count;i++){
-      let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
-      let w=Math.sin(y*4+state.seed)*strength+Math.sin(x*6+state.seed*.4)*strength*.45;
-      pos.setXYZ(i,x*(1+w),y*(1-w*.35),z)
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
     }
-    pos.needsUpdate=true;g.computeVertexNormals();
-    const mesh=add(new T.Mesh(g,metalMat()));mesh.castShadow=true;mesh.receiveShadow=true;
-  }
-
-  function bail(){
-    const m=metalMat();
-    if(state.bail==='hidden'){
-      const b=add(new T.Mesh(new T.TorusGeometry(.14,.035,12,48,Math.PI*1.5),m));b.position.set(0,1.22,.02)
-    }else{
-      const rad=state.bail==='wide'?.22:.16,tube=state.bail==='wide'?.055:.04;
-      const b=add(new T.Mesh(new T.TorusGeometry(rad,tube,14,52),m));b.position.set(0,1.2,.02)
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
     }
-  }
-
-  function chain(){
-    if(state.chain==='none')return;
-    const m=metalMat(),pts=[],count=75,spread=2.7;
-    for(let i=0;i<=count;i++){
-      const t=i/count,x=(t-.5)*2*spread,u=Math.abs(t-.5)*2;
-      const y=3.15-(1-Math.pow(u,1.65))*2.05;
-      pts.push(new T.Vector3(x,y,-.04))
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
     }
-    const curve=new T.CatmullRomCurve3(pts);
-    const tube=state.chain==='cable'?.045:.028;
-    add(new T.Mesh(new T.TubeGeometry(curve,170,tube,8,false),m))
-  }
-
-  function gemAt(type,size,xp,yp,index=0){
-    if(type==='none')return;
-    const gs=(size/3)*.15;
-    const gm=new T.MeshPhysicalMaterial({
-      color:gemColors[type],roughness:type==='diamond'?.02:.06,metalness:0,
-      transmission:type==='diamond'?.55:.12,transparent:true,opacity:.98,clearcoat:1,ior:2.1,thickness:.6
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) => {
+    lastPointerWasTouch =
+      event.type === "pointerdown" && event.pointerType === "touch";
+  };
+  const handleTouchClick = (event) => {
+    const isTouch = event.pointerType === "touch" || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch && activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() => {
+      if (activeTrigger === trigger && !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) => {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handlers = {
+    pointerover: handlePointerOpen,
+    pointerdown: handlePointer,
+    pointercancel: handlePointer,
+    click: handleTouchClick,
+    pointerout: handleLeave,
+    focusin: handleFocusIn,
+    focusout: handleLeave,
+    keydown: handleKeyDown,
+    contextmenu: handleContextMenu,
+  };
+  const roots = new Map();
+  const handledEvents = new WeakSet();
+  const handleEvent = (event) => {
+    if (handledEvents.has(event)) return;
+    handledEvents.add(event);
+    handlers[event.type](event);
+  };
+  const discoverRoots = (node) => {
+    if (node.shadowRoot) listen(node.shadowRoot);
+    for (const element of node.querySelectorAll("*")) {
+      if (element.shadowRoot) listen(element.shadowRoot);
+    }
+  };
+  const listen = (root) => {
+    if (roots.has(root)) return;
+    for (const type of Object.keys(handlers)) root.addEventListener(type, handleEvent);
+    const observer = new window.MutationObserver((records) => {
+      for (const { addedNodes } of records) {
+        for (const node of addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) discoverRoots(node);
+        }
+      }
+      for (const [root, cleanup] of roots) {
+        if (root.host && !root.host.isConnected) {
+          cleanup();
+          roots.delete(root);
+        }
+      }
+      if (activeTrigger && !activeTrigger.isConnected) closeTooltip(false);
     });
-    const x=(xp/35)*.58*(state.width/28),y=(yp/35)*.65*(state.height/32);
-    const stone=add(new T.Mesh(new T.OctahedronGeometry(gs,3),gm));stone.position.set(x,y,.25+state.thickness*.012);stone.rotation.z=Math.PI/4;
-    const bezel=add(new T.Mesh(new T.TorusGeometry(gs*.92,.026,10,40),metalMat()));bezel.position.set(x,y,.18+state.thickness*.01);bezel.rotation.x=Math.PI/2
-  }
-  function stones(){
-    if(state.stone!=='none')gemAt(state.stone,state.stoneSize,state.stoneX,state.stoneY);
-    state.stones.forEach((s,i)=>gemAt(s.type,s.size,s.x,s.y,i+1))
-  }
-
-  function build(){
-    clear();chain();pendant();bail();stones();updateUIStats()
-  }
-
-  function volumeCm3(){
-    const areaFactor={oval:.78,drop:.66,rect:.82,bar:.32,triangle:.48,organic:.70}[state.shape]||.7;
-    return (state.width*state.height*state.thickness*areaFactor)/1000
-  }
-  function updateUIStats(){
-    const vol=volumeCm3(),weight=vol*metals[state.metal].density*.72,stoneCount=(state.stone==='none'?0:1)+state.stones.length;
-    document.getElementById('volume').textContent=vol.toFixed(2)+' cm³';
-    document.getElementById('weight').textContent=weight.toFixed(1)+' g';
-    document.getElementById('wall').textContent=state.thickness.toFixed(1)+' mm';
-    document.getElementById('stoneStat').textContent=stoneCount;
-    document.getElementById('stoneCount').textContent=stoneCount+' stone'+(stoneCount===1?'':'s');
-    document.getElementById('statusWeight').textContent=weight.toFixed(1)+' g';
-    const dims=state.width.toFixed(1)+' × '+state.height.toFixed(1)+' × '+state.thickness.toFixed(1)+' mm';
-    document.getElementById('measureChip').textContent=dims;document.getElementById('statusDims').textContent=dims;
-    const valid=state.thickness>=1.5&&state.width>=14&&state.height>=16;
-    document.getElementById('validState').textContent=valid?'Production-ready geometry':'Review manufacturing constraints';
-    document.getElementById('validState').style.color=valid?'#2d8b57':'#b27621'
-  }
-
-  const canvas=document.getElementById('canvas');
-  function resize(){const r=canvas.parentElement.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
-  addEventListener('resize',resize);resize();
-
-  let drag=false,lx=0,ly=0,ty=root.rotation.y,tx=root.rotation.x,zoom=11,pinch=null;
-  canvas.onpointerdown=e=>{drag=true;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture?.(e.pointerId)};
-  canvas.onpointermove=e=>{if(!drag)return;ty+=(e.clientX-lx)*.006;tx+=(e.clientY-ly)*.004;lx=e.clientX;ly=e.clientY};
-  canvas.onpointerup=canvas.onpointercancel=()=>drag=false;
-  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=T.MathUtils.clamp(zoom+e.deltaY*.007,7.5,15)},{passive:false});
-  canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);if(pinch!==null)zoom=T.MathUtils.clamp(zoom-(d-pinch)*.012,7.5,15);pinch=d}},{passive:true});
-  canvas.addEventListener('touchend',()=>pinch=null);
-  function anim(){root.rotation.y+=(ty-root.rotation.y)*.08;root.rotation.x+=(tx-root.rotation.x)*.08;camera.position.z+=(zoom-camera.position.z)*.08;renderer.render(scene,camera);requestAnimationFrame(anim)}anim();
-
-  function markSaved(){document.getElementById('autosave').textContent='Saving…';clearTimeout(markSaved.t);markSaved.t=setTimeout(()=>document.getElementById('autosave').textContent='Autosaved',450)}
-  function bindRange(id,key,valId,fmt=v=>v){const e=document.getElementById(id);e.onpointerdown=remember;e.oninput=()=>{state[key]=+e.value;document.getElementById(valId).textContent=fmt(state[key]);build();markSaved()}}
-  bindRange('width','width','widthVal',v=>v.toFixed(1));
-  bindRange('height','height','heightVal',v=>v.toFixed(1));
-  bindRange('thickness','thickness','thicknessVal',v=>v.toFixed(1));
-  bindRange('edge','edge','edgeVal',v=>v.toFixed(1));
-  bindRange('organic','organic','organicVal',v=>v+'%');
-  bindRange('rough','rough','roughVal',v=>v+'%');
-  bindRange('stoneSize','stoneSize','stoneSizeVal',v=>v.toFixed(1)+' mm');
-  ['stoneX','stoneY'].forEach(id=>{const e=document.getElementById(id);e.onpointerdown=remember;e.oninput=()=>{state[id]=+e.value;build()}});
-
-  document.querySelectorAll('[data-shape]').forEach(b=>b.onclick=()=>{remember();state.shape=b.dataset.shape;document.querySelectorAll('[data-shape]').forEach(x=>x.classList.toggle('active',x===b));build()});
-  document.querySelectorAll('[data-metal]').forEach(b=>b.onclick=()=>{remember();state.metal=b.dataset.metal;document.querySelectorAll('[data-metal]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('metalLabel').textContent=metals[state.metal].label;build()});
-  document.querySelectorAll('[data-stone]').forEach(b=>b.onclick=()=>{remember();state.stone=b.dataset.stone;document.querySelectorAll('[data-stone]').forEach(x=>x.classList.toggle('active',x===b));build()});
-
-  document.getElementById('bailType').onchange=e=>{remember();state.bail=e.target.value;build()};
-  document.getElementById('chainType').onchange=e=>{remember();state.chain=e.target.value;build()};
-  document.getElementById('engraving').oninput=e=>{state.engraving=e.target.value;markSaved()};
-  document.getElementById('engraveDepth').oninput=e=>{state.engraveDepth=+e.target.value;document.getElementById('engraveDepthVal').textContent=state.engraveDepth.toFixed(1)+' mm'};
-
-  document.getElementById('addStone').onclick=()=>{if(state.stone==='none')return;remember();const n=state.stones.length;state.stones.push({type:state.stone,size:state.stoneSize,x:-18+n*14,y:-12+n*9});build()};
-
-  document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{
-    document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b));
-    const map={design:'Dimensions',templates:'Template',stones:'Stone setting',settings:'Production',text:'Text / engraving',components:'Components',material:'Metal'};
-    document.getElementById('panelTitle').textContent=map[b.dataset.tool]||'Pendant';
-    const target=document.querySelector('[data-section="'+b.dataset.tool+'"]');
-    target?.scrollIntoView({behavior:'smooth',block:'start'});
-    document.getElementById('inspector').classList.add('open')
-  });
-
-  document.getElementById('frontBtn').onclick=()=>{tx=0;ty=0;document.getElementById('viewChip').textContent='Pendant · Front view'};
-  document.getElementById('isoBtn').onclick=()=>{tx=-.25;ty=.55;document.getElementById('viewChip').textContent='Pendant · Perspective'};
-  document.getElementById('fitBtn').onclick=()=>{zoom=11};
-
-  document.getElementById('aiApply').onclick=()=>{
-    const q=document.getElementById('aiPrompt').value.toLowerCase();
-    if(!q.trim())return;remember();
-    if(q.includes('orgán')){state.shape='organic';state.organic=Math.max(state.organic,55)}
-    if(q.includes('lágrima'))state.shape='drop';
-    if(q.includes('rect'))state.shape='rect';
-    if(q.includes('largo')||q.includes('alarga'))state.height=Math.min(65,state.height+8);
-    if(q.includes('ancho'))state.width=Math.min(55,state.width+6);
-    if(q.includes('fino'))state.thickness=Math.max(1.5,state.thickness-.8);
-    if(q.includes('zafiro'))state.stone='sapphire';
-    if(q.includes('rubí')||q.includes('rubi'))state.stone='ruby';
-    if(q.includes('diamante'))state.stone='diamond';
-    state.seed=Math.floor(Math.random()*1000);sync();build()
+    observer.observe(root, { childList: true, subtree: true });
+    roots.set(root, () => {
+      observer.disconnect();
+      for (const type of Object.keys(handlers)) root.removeEventListener(type, handleEvent);
+    });
+    discoverRoots(root);
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    for (const cleanup of roots.values()) cleanup();
+    roots.clear();
+    tooltip = null;
   };
 
-  document.getElementById('undo').onclick=()=>{if(!history.length)return;future.push(clone());Object.assign(state,history.pop());sync();build()};
-  document.getElementById('redo').onclick=()=>{if(!future.length)return;history.push(clone());Object.assign(state,future.pop());sync();build()};
-  document.getElementById('save').onclick=e=>{localStorage.setItem('k2-v3',JSON.stringify(state));e.target.textContent='Saved ✓';setTimeout(()=>e.target.textContent='Save',1000)};
-  document.getElementById('exportBtn').onclick=()=>{
-    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download='k2-design.json';a.click();URL.revokeObjectURL(a.href)
-  };
-  document.getElementById('panelToggle').onclick=()=>document.getElementById('inspector').classList.toggle('open');
-
-  function sync(){
-    const ids=['width','height','thickness','edge','organic','rough','stoneSize','stoneX','stoneY'];
-    ids.forEach(id=>document.getElementById(id).value=state[id]);
-    document.getElementById('widthVal').textContent=state.width.toFixed(1);
-    document.getElementById('heightVal').textContent=state.height.toFixed(1);
-    document.getElementById('thicknessVal').textContent=state.thickness.toFixed(1);
-    document.getElementById('edgeVal').textContent=state.edge.toFixed(1);
-    document.getElementById('organicVal').textContent=state.organic+'%';
-    document.getElementById('roughVal').textContent=state.rough+'%';
-    document.getElementById('stoneSizeVal').textContent=state.stoneSize.toFixed(1)+' mm';
-    document.getElementById('bailType').value=state.bail;document.getElementById('chainType').value=state.chain;
-    document.querySelectorAll('[data-shape]').forEach(x=>x.classList.toggle('active',x.dataset.shape===state.shape));
-    document.querySelectorAll('[data-metal]').forEach(x=>x.classList.toggle('active',x.dataset.metal===state.metal));
-    document.querySelectorAll('[data-stone]').forEach(x=>x.classList.toggle('active',x.dataset.stone===state.stone));
-    document.getElementById('metalLabel').textContent=metals[state.metal].label
-  }
-
-  try{const saved=JSON.parse(localStorage.getItem('k2-v3'));if(saved)Object.assign(state,saved)}catch(e){}
-  sync();build();
+  // Events between children of one shadow root never reach the document.
+  listen(document);
+  window.addEventListener("pagehide", destroy, { once: true });
 })();
 </script>
+<script id="codex-visualization-tabs">
+(() => {
+  const selector = '.nav[role="tablist"] [role="tab"]';
+  const disabled = ':disabled,[aria-disabled="true"]';
+  const selectTab = (selected) => {
+    const panelId = selected.getAttribute("aria-controls");
+    for (const tab of selected.closest('[role="tablist"]').querySelectorAll('[role="tab"]')) {
+      const active = tab === selected;
+      tab.classList.toggle("active", active);
+      tab.setAttribute("aria-selected", String(active));
+      const id = tab.getAttribute("aria-controls");
+      const panel = id && document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden && selected.id) {
+          panel.setAttribute("aria-labelledby", selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) => {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === "click") {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]'),
+    ).filter((candidate) => !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll('.nav[role="tablist"]')) {
+    const selected =
+      list.querySelector('[role="tab"][aria-selected="true"]') ??
+      list.querySelector('[role="tab"].active') ??
+      list.querySelector('[role="tab"]');
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener("click", interact);
+  document.addEventListener("keydown", interact);
+  window.addEventListener("pagehide", () => {
+    document.removeEventListener("click", interact);
+    document.removeEventListener("keydown", interact);
+  }, { once: true });
+})();
+</script>
+<script id="codex-visualization-carousel">
+  (() => {
+    for (const root of document.querySelectorAll(".viz-carousel")) {
+      const panels = Array.from(
+        root.querySelectorAll(":scope > [data-variant]"),
+      );
+      if (panels.length === 0) {
+        continue;
+      }
+      root.setAttribute("role", "group");
+      panels.forEach((panel, index) => {
+        panel.hidden = index !== 0;
+        panel.setAttribute("role", "group");
+        if (!panel.hasAttribute("aria-label")) {
+          panel.setAttribute("aria-label", panel.dataset.variant);
+        }
+      });
+      root.dataset.activeVariant = panels[0].dataset.variant;
+      if (panels.length === 1) {
+        continue;
+      }
+
+      const controls = document.createElement("div");
+      controls.className = "viz-carousel-controls";
+      // Portable copy of the settings dropdown's legacy glyph; no 14px icon-package preset matches it.
+      // https://github.com/openai/openai/blob/master/codex/codex-apps/webview/src/icons/chevron.svg
+      controls.innerHTML = `
+      <button type="button" class="viz-carousel-previous cursor-interaction"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+      <details class="viz-carousel-picker">
+        <summary class="cursor-interaction">
+          <span class="viz-carousel-count tabular-nums"></span>
+          <span class="viz-carousel-name"></span>
+          <svg class="viz-carousel-caret" width="14" height="14" viewBox="0 0 20 21" fill="none" aria-hidden="true" focusable="false">
+            <path d="M15.2793 7.71101C15.539 7.45131 15.961 7.45131 16.2207 7.71101C16.4804 7.97071 16.4804 8.39272 16.2207 8.65242L10.4707 14.4024C10.211 14.6621 9.78902 14.6621 9.52932 14.4024L3.77932 8.65242L3.69436 8.54792C3.52385 8.28979 3.55205 7.93828 3.77932 7.71101C4.00659 7.48374 4.3581 7.45554 4.61623 7.62605L4.72073 7.71101L10 12.9903L15.2793 7.71101Z" fill="currentColor" stroke="currentColor" stroke-width="0.6" />
+          </svg>
+        </summary>
+        <div class="viz-carousel-options"></div>
+      </details>
+      <button type="button" class="viz-carousel-next cursor-interaction"><i data-lucide="chevron-right" aria-hidden="true"></i></button>`;
+      const previous = controls.querySelector(".viz-carousel-previous");
+      const next = controls.querySelector(".viz-carousel-next");
+      const picker = controls.querySelector(".viz-carousel-picker");
+      const summary = picker.querySelector("summary");
+      const count = controls.querySelector(".viz-carousel-count");
+      const name = controls.querySelector(".viz-carousel-name");
+      const options = controls.querySelector(".viz-carousel-options");
+      const status = document.createElement("span");
+      status.className = "sr-only";
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+      previous.setAttribute(
+        "aria-label",
+        root.dataset.previousLabel ?? "Previous variant",
+      );
+      next.setAttribute("aria-label", root.dataset.nextLabel ?? "Next variant");
+
+      let active = 0;
+      let mousePointerId = null;
+      let summaryPointerHandled = false;
+      summary.addEventListener("pointerdown", (event) => {
+        summaryPointerHandled =
+          event.pointerType === "mouse" && event.button === 0 && !event.ctrlKey;
+        if (!summaryPointerHandled) {
+          return;
+        }
+        event.preventDefault();
+        summary.focus({ preventScroll: true });
+        picker.open = !picker.open;
+        mousePointerId = picker.open ? event.pointerId : null;
+      });
+      summary.addEventListener("click", (event) => {
+        if (summaryPointerHandled && event.detail > 0) {
+          event.preventDefault();
+        }
+      });
+      const choices = panels.map((panel, index) => {
+        const choice = document.createElement("button");
+        choice.type = "button";
+        choice.className = "cursor-interaction";
+        choice.textContent = panel.dataset.variant;
+        choice.addEventListener("click", () => {
+          select(index);
+          summary.focus();
+        });
+        choice.addEventListener("pointerup", (event) => {
+          if (
+            picker.open &&
+            event.pointerType === "mouse" &&
+            event.button === 0 &&
+            event.pointerId === mousePointerId
+          ) {
+            choice.click();
+          }
+        });
+        options.appendChild(choice);
+        return choice;
+      });
+      const select = (index) => {
+        const changed = active !== index;
+        active = index;
+        panels.forEach((panel, position) => {
+          panel.hidden = position !== active;
+          choices[position].setAttribute(
+            "aria-current",
+            String(position === active),
+          );
+        });
+        root.dataset.activeVariant = panels[active].dataset.variant;
+        count.textContent = `${active + 1} / ${panels.length}`;
+        name.textContent = panels[active].dataset.variant;
+        picker.open = false;
+        mousePointerId = null;
+        if (changed) {
+          status.textContent = `${count.textContent}: ${name.textContent}`;
+        }
+      };
+      previous.addEventListener("click", () =>
+        select((active + panels.length - 1) % panels.length),
+      );
+      next.addEventListener("click", () =>
+        select((active + 1) % panels.length),
+      );
+      picker.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && picker.open) {
+          event.preventDefault();
+          picker.open = false;
+          mousePointerId = null;
+          summary.focus();
+          return;
+        }
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        const index = choices.indexOf(document.activeElement);
+        let nextIndex;
+        if (event.key === "ArrowDown") {
+          nextIndex = index < 0 ? active : (index + 1) % choices.length;
+        } else if (event.key === "ArrowUp") {
+          nextIndex = index < 0 ? active : (index + choices.length - 1) % choices.length;
+        } else if (picker.open && event.key === "Home") {
+          nextIndex = 0;
+        } else if (picker.open && event.key === "End") {
+          nextIndex = choices.length - 1;
+        } else {
+          return;
+        }
+        event.preventDefault();
+        picker.open = true;
+        choices[nextIndex].focus();
+      });
+      picker.addEventListener("focusout", (event) => {
+        if (!picker.contains(event.relatedTarget)) {
+          picker.open = false;
+          mousePointerId = null;
+        }
+      });
+      const dismiss = (event) => {
+        if (!summary.contains(event.target)) {
+          mousePointerId = null;
+        }
+        if (!picker.contains(event.target)) {
+          picker.open = false;
+        }
+      };
+      const endPointerSelection = () => {
+        mousePointerId = null;
+      };
+      const sizePicker = () => {
+        root.style.setProperty(
+          "--viz-carousel-picker-height",
+          `${picker.open ? options.offsetHeight : 0}px`,
+        );
+      };
+      picker.addEventListener("toggle", sizePicker);
+      window.addEventListener("resize", sizePicker);
+      document.addEventListener("pointerdown", dismiss);
+      document.addEventListener("pointerup", endPointerSelection);
+      document.addEventListener("pointercancel", endPointerSelection);
+      window.addEventListener("blur", endPointerSelection);
+      window.addEventListener(
+        "pagehide",
+        () => {
+          document.removeEventListener("pointerdown", dismiss);
+          document.removeEventListener("pointerup", endPointerSelection);
+          document.removeEventListener("pointercancel", endPointerSelection);
+          window.removeEventListener("blur", endPointerSelection);
+          window.removeEventListener("resize", sizePicker);
+        },
+        { once: true },
+      );
+      root.append(controls, status);
+      select(0);
+    }
+  })();
+</script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script>
+(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+
+
 </body>
 </html>
